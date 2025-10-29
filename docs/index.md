@@ -6,7 +6,7 @@ output:
     md_extensions: +raw_html
 ---
 
-By Dean Baltiansky
+By Dean Baltiansky (in collaboration with <a href="https://business.columbia.edu/faculty/people/daniel-ames" target="_blank">Prof. Daniel Ames</a>)
 
 <img src="./assets/banner-animals.png" alt="Animals Fighting - Banner" style="width:100%; height:auto;">
 
