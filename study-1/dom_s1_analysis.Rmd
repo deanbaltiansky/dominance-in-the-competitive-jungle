@@ -274,7 +274,7 @@ df_s1_elg %>%
 
 Median income: **`r median_income`**.
 
-# Primary Measures
+# Primary measures
 
 ## Competitive worldview
 
@@ -996,22 +996,6 @@ df_s1_elg %>%
     EXPLORE CORRELATIONS ↗
   </a>
 
-**Key:**
-
-  1. CWV: Competitive worldview
-  2. ZSB: Zero-sum beliefs
-  3. copri: Cooperaitve primal beliefs
-  4. self_dominance: Dominance strategies
-  5. self_prestige: Prestige strategies
-  6. rel_dominance: Relationship expectancies of dominance
-  7. rel_prestige: Relationship expectancies of prestige
-  8. infl_dominance: Influence expectancies of dominance
-  9. infl_prestige: Influence expectancies of prestige
-  10. TOPS_coer: Coercive theories of power
-  11. TOPS_coll: Collaborative theories of power
-  12. care_rel: Relationship motivations at work
-  13. care_infl: Influence motivations at work
-
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(9,9)}
 df_s1_elg %>% 
   dplyr::select(CWV,
@@ -1029,3 +1013,19 @@ df_s1_elg %>%
                 care_infl) %>%
   corPlot(upper = TRUE,stars = TRUE,xsrt = 270)
 ```
+
+**Key:**
+
+  1. CWV: Competitive worldview
+  2. ZSB: Zero-sum beliefs
+  3. copri: Cooperaitve primal beliefs
+  4. self_dominance: Dominance strategies
+  5. self_prestige: Prestige strategies
+  6. rel_dominance: Relationship expectancies of dominance
+  7. rel_prestige: Relationship expectancies of prestige
+  8. infl_dominance: Influence expectancies of dominance
+  9. infl_prestige: Influence expectancies of prestige
+  10. TOPS_coer: Coercive theories of power
+  11. TOPS_coll: Collaborative theories of power
+  12. care_rel: Relationship motivations at work
+  13. care_infl: Influence motivations at work
