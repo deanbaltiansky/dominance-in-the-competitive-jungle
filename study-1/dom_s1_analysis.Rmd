@@ -9,7 +9,1023 @@ output:
 knit: (function(input_file, encoding) { rmarkdown::render(input_file, encoding = encoding, output_file = 'index.html', output_dir = here::here('docs','studies','study-1')); })
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r,include=FALSE}
+detachAllPackages <- function() {
+
+  basic.packages <- c("package:stats","package:graphics","package:grDevices","package:utils","package:datasets","package:methods","package:base")
+
+  package.list <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+
+  package.list <- setdiff(package.list,basic.packages)
+
+  if (length(package.list)>0)  for (package in package.list) detach(package, character.only=TRUE)
+
+}
+
+detachAllPackages()
 ```
 
+```{r,include=FALSE}
+library(apa)
+library(see)
+library(lme4)
+library(lmerTest)
+library(interactions)
+library(jtools)
+library(gridExtra)
+library(kableExtra)
+library(apaTables)
+library(papaja)
+library(knitr)
+library(psych)
+library(GPArotation)
+library(PerformanceAnalytics)
+library(gt)
+library(tidytext)
+library(textdata)
+library(tidyverse)
+library(diagram)
+library(factoextra)
+library(SnowballC)
+library(hunspell)
+library(quanteda)
+
+repo_url <- "https://raw.githubusercontent.com/deanbaltiansky/dominance-in-the-competitive-jungle/main/study-1/data/"
+
+df_s1 <- readr::read_csv(paste0(repo_url,"df_s1.csv"), show_col_types = FALSE)
+```
+
+```{r,include=FALSE}
+df_s1 <- df_s1 %>% 
+    mutate(income = factor(income,c("$0-$20,000",
+                                  "$20,001-$40,000",
+                                  "$40,001-$60,000",
+                                  "$60,001-$80,000",
+                                  "$80,001-$100,000",
+                                  "$100,001-$120,000",
+                                  "$120,001-$140,000",
+                                  "$140,001-$160,000",
+                                  "$160,001-$180,000",
+                                  "$180,001-$200,000",
+                                  "Over $200,000")),
+         edu = factor(edu,c("noHS",
+                            "GED",
+                            "2yearColl",
+                            "4yearColl",
+                            "MA",
+                            "PHD")),
+         income_num = as.numeric(income),
+         edu_num = as.numeric(edu),
+         white = ifelse(race == "white",1,0),
+         man = ifelse(gender == "man",1,0))
+
+df_s1_elg <- df_s1 %>% 
+  filter(elg == 1)
+```
+
+# Background
+
+The purpose of Study 1 is to provide discriminant and internal validity to our theoretical model: Those with a competitive worldview expect dominance to incur less relationship harm and, in turn, they are more likely to behave dominantly.
+
+We want to make sure the design properly addresses the following:
+
+  1. Competitive worldview, relationship expectancies of dominance, and dominance are all measured correctly. To that end, we only use well-validated scales:
+    a. Competitive worldview: a view of the social world as a constant battle for status and resources (*It's a dog-eat-dog world where you have to be ruthless at times*; <a href="https://doi.org/10.1016/j.jrp.2012.10.004" target="_blank"> Perry et al., 2013</a>).
+    b. Dominance strategies: use of dominant strategies at attain and maintain status at work (*I am willing to use aggressive tactics to get my way at work*; <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>).
+    c. Relationship expectancies of dominance strategies: the same behaviors of the dominance strategies scale were assessed for their perceived impact on relationships with others at work. 
+  2. It is competitive worldview that predicts relationship expectancies and dominance, over and above related constructs (that have been shown in the past to predict dominance). Therefore, we statistically control for the following: 
+    a. Status zero-sum beliefs: the belief that if one gains status, others lose status (<a href="https://doi.org/10.1037/xge0001282" target="_blank"> Andrews-Fearon & Davidai, 2023</a>).
+    b. Cooperative primal beliefs: the belief that people are naturally and inherently cooperative (<a href="https://doi.org/10.1037/pas0000639" target="_blank"> Clifton et al., 2019</a>).
+    c. Coercive theories power: lay theories according to which the way to maintain power is through coercion, intimidation, and force (<a href="https://doi.org/10.1037/pspi0000345" target="_blank"> ten Brinke & Keltner, 2022</a>).
+    d. Collaborative theories of power: lay theories according to which the way to maintain power is through virtue, respect, and empathy (<a href="https://doi.org/10.1037/pspi0000345" target="_blank"> ten Brinke & Keltner, 2022</a>).
+  3. It is relationship expectancies, and not relationship motivations or influence expectancies, that is driving the effect of competitive worldview on dominance strategies at work. To that end, we measure:
+    a. Relationship motivations: two items measuring the extent to which participants care about having good relationships at work.
+    b. Influence expectancies of dominance strategies: the same behaviors of the dominance strategies scale were assessed for their perceived impact on influence over others at work.
+    
+We also want to be able to ask about people's daily lives, so we limit our sample to full- and part-time employees.
+
+# Preregistered hypotheses
+
+This study was preregistered here: <a href="https://osf.io/ygs53/?view_only=f5844a8417ec4ce8ae1c45e8cd858674" target="_blank"> Open Science Framework</a>
+
+  1. Competitive worldview will be positively associated with self-reported dominance strategies.
+  2. Competitive worldview will be positively associated with relationship expectancies of dominance strategies.
+  3. The relationship between competitive worldview and self dominance strategies will be–at least partially–explained by relationship expectancies of dominance strategies.
+
+# Data collection
+
+We collected data on Jan. 27th, 2024 through Connect by CloudResearch; an online participant recruitment platform. We restricted our sample to full- and part-time employees. The target sample was set at 300 participants, lending us sufficient statistical power to find our hypothesized effect.\
+\
+We excluded participants who failed two preregistered attention checks, as well as those who got through the platforms filter despite not being full- or part-time employes.
+
+```{r,results='asis',echo=TRUE,warning=FALSE,message=FALSE}
+n_eligible <- df_s1 %>% 
+  group_by(elg) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  filter(elg == 1) %>% 
+  select(N) %>% 
+  unlist() %>% 
+  unname()
+
+passed_checks <- df_s1 %>% 
+  group_by(att_1,att_2) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  filter(att_1 == 1 & att_2 == 1) %>% 
+  select(N) %>% 
+  unlist() %>% 
+  unname()
+
+df_s1 %>% 
+  group_by(att_1,att_2) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+`r passed_checks` participants passed both attention checks.
+
+```{r,results='asis',echo=TRUE,warning=FALSE,message=FALSE}
+df_s1 %>% 
+  filter(att_1 == 1 & att_2 == 1) %>% 
+  group_by(employment) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+4 are not longer employed.
+
+That leaves us with `r n_eligible` eligible participants.
+
+# Demographics
+
+## Race/Ethnicity
+
+```{r,results='asis',echo=TRUE,warning=FALSE,message=FALSE}
+df_s1_elg %>% 
+  group_by(race) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  arrange(desc(Perc)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Gender
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s1_elg %>% 
+  mutate(gender = ifelse(is.na(gender) | gender == "","other",gender)) %>% 
+  group_by(gender) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  arrange(desc(Perc)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Age
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s1_elg %>% 
+  summarise(age_mean = round(mean(age,na.rm = T),2),
+            age_sd = round(sd(age,na.rm = T),2)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Education
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s1_elg %>% 
+  group_by(edu) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Income
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+median_income_num <- df_s1_elg %>% 
+  summarise(median = median(income_num,na.rm = T))
+
+median_income <- median_income_num %>% 
+  mutate(income_char = case_when(median == 1 ~ "$0-$20,000",
+                                 median == 2 ~ "$20,001-$40,000",
+                                 median == 3 ~ "$40,001-$60,000",
+                                 median == 4 ~ "$60,001-$80,000",
+                                 median == 5 ~ "$80,001-$100,000",
+                                 median == 6 ~ "$100,001-$120,000",
+                                 median == 7 ~ "$120,001-$140,000",
+                                 median == 8 ~ "$140,001-$160,000",
+                                 median == 9 ~ "$160,001-$180,000",
+                                 median == 10 ~ "$180,001-$200,000",
+                                 median == 11 ~ "Over $200,000")) %>% 
+  select(income_char) %>% 
+  unlist() %>% 
+  unname()
+
+df_s1_elg %>%
+  ggplot(aes(x = income, fill = income == median_income)) +
+  geom_bar(show.legend = FALSE) +
+  scale_fill_manual(values = c("FALSE" = "grey66", "TRUE" = "red")) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  coord_flip()
+```
+
+Median income: **`r median_income`**.
+
+# Primary Measures
+
+## Competitive worldview
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>% 
+  dplyr::select(CWV_1:CWV_10R) %>% 
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+From <a href="https://doi.org/10.1016/j.jrp.2012.10.004" target="_blank"> Perry et al., 2013</a>
+
+1 = *Strongly Disagree* to 7 = *Strongly Agree*
+
+  1. It’s a dog-eat-dog world where you have to be ruthless at times
+  2. Life is not governed by the "survival of the fittest." We should let compassion and moral laws be our guide [R]
+  3. There is really no such thing as "right" and "wrong." It all boils down to what you can get away with
+  4. One of the most useful skills a person should develop is how to look someone straight in the eye and lie convincingly
+  5. It is better to be loved than to be feared [R]
+  6. My knowledge and experience tell me that the social world we live in is basically a competitive "jungle" in which the fittest survive and succeed, in which power, wealth, and winning are everything, and might is right
+  7. Do unto others as you would have them do unto you, and never do anything unfair to someone else [R]
+  8. Basically people are objects to be quietly and coolly manipulated for one’s own benefit
+  9. Honesty is the best policy in all cases [R]
+  10. One should give others the benefit of the doubt. Most people are trustworthy if you have faith in them [R]
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = CWV)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$CWV,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Cooperative primal beliefs
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>% 
+  dplyr::select(copri_1R:copri_4) %>% 
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+From <a href="https://doi.org/10.1037/pas0000639" target="_blank"> Clifton et al., 2019</a>
+
+1 = *Strongly Disagree* to 7 = *Strongly Agree*
+
+  1. For all life—from the smallest organisms, to plants, animals, and for people too—everything is a cut-throat competition [R]
+  2. Instead of being cooperative, life is a brutal contest where you’ve got to do whatever it takes to survive [R]
+  3. Instead of being cooperative, the world is a cut-throat and competitive place [R]
+  4. The world runs on trust and cooperation way more than suspicion and competition
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = copri)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$copri,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Status zero-sum beliefs
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>% 
+  dplyr::select(ZSB_1:ZSB_8R) %>% 
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+From <a href="https://doi.org/10.1037/xge0001282" target="_blank"> Andrews-Fearon & Davidai, 2023</a>
+
+1 = *Strongly Disagree* to 7 = *Strongly Agree*
+
+  1. When status for one person is increasing it means that status for another person is decreasing
+  2. Status is a limited good—when one person gains in status it inevitably comes at another person’s expense
+  3. When one person moves up the social hierarchy it means that another person has to move down the hierarchy
+  4. If someone wants to move up the social hierarchy, they have to do so at someone else’s expense
+  5. Status is not a finite resource [R]
+  6. When one person has a lot of status it doesn’t mean that someone else lacks status [R]
+  7. Not everyone can be high status. If one person has higher status, someone else must have lower status
+  8. When one person gains in status, it does not mean that someone else is losing status [R]
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = ZSB)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$ZSB,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Coercive theories of power
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>% 
+  dplyr::select(TOPS_coer_1:TOPS_coer_10) %>% 
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+From <a href="https://doi.org/10.1037/pspi0000345" target="_blank"> ten Brinke & Keltner, 2022</a>
+
+1 = *Strongly Disagree* to 7 = *Strongly Agree*
+
+  1. Maintaining power requires ruthlessness
+  2. People keep power by being feared by others
+  3. People gain power through the use of manipulation and deception
+  4. People mainly gain power by force
+  5. To maintain power, a person must be willing to do whatever is necessary, including breaking the rules, using force, and coercion
+  6. People most typically gain power by reducing the status of other people
+  7. Often it requires aggression to gain power
+  8. An influential individual is typically intimidating
+  9. Having power means always having the "final say"
+  10. Power is usually vertically arranged, with a few people at the top having most of the influence and many at the bottom having little to none
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = TOPS_coer)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$TOPS_coer,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Collaborative theories of power
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>% 
+  dplyr::select(TOPS_coll_1:TOPS_coll_10) %>% 
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+From <a href="https://doi.org/10.1037/pspi0000345" target="_blank"> ten Brinke & Keltner, 2022</a>
+
+1 = *Strongly Disagree* to 7 = *Strongly Agree*
+
+  1. Maintaining power requires the ability to collaborate and compromise with others
+  2. Maintaining power requires compassion for others
+  3. People rise in power through virtue and respect
+  4. Having high ethical and moral standards is necessary to keep power
+  5. Powerful individuals focus on the needs of group members
+  6. Influential individuals need to be approachable and empathetic
+  7. Gaining power requires collaboration with other individuals
+  8. People most typically gain power by being given responsibilities and opportunities by others
+  9. In a group, there can be many influential people
+  10. Power is often shared by many individuals in a group
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = TOPS_coll)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$TOPS_coll,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Dominance strategies
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>%
+  dplyr::select(self_2,
+                self_4,
+                self_6,
+                self_8,
+                self_9R,
+                self_11,
+                self_12R,
+                self_14,
+                self_16) %>%
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+From <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>
+
+We're now going to shift to some of your other experiences at work.
+
+Please indicate the extent to which each statement below accurately describes you at work, using any of the points on the 7 point scale...
+
+1 = *Not at all* to 7 = *Very much*
+
+  1. I enjoy (or would enjoy) having control over others at work
+  2. I often try to get my own way at work regardless of what others may want
+  3. I am willing to use aggressive tactics to get my way at work
+  4. I try to control others rather than permit them to control me at work
+  5. I do NOT have a forceful or dominant personality at work [R]
+  6. Others know it is better to let me have my way at work
+  7. I do NOT enjoying having authority over other people at work [R]
+  8. Some people at work are afraid of me
+  9. Others at work do NOT enjoying hanging out with me
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = self_dominance)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$self_dominance,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Relationship expectancies of dominance
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>%
+  dplyr::select(exp_rel_2,
+         exp_rel_4,
+         exp_rel_6,
+         exp_rel_8,
+         exp_rel_9R,
+         exp_rel_11,
+         exp_rel_12R,
+         exp_rel_14,
+         exp_rel_16) %>%
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+Adapted from <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>
+
+What leads someone to have good **relationships?**
+
+Below, we list some attributes and behaviors that a person might display in a group of other people. What do you think is the impact of each of these things on whether that person **has good relationships with others in that group?**
+
+1 = *Strong negative effect on relationships* to 7 = *Strong positive effect on relationships*
+
+  1. Enjoying having control over other members of the group
+  2. Often trying to get their own way regardless of what others in the group may want
+  3. Being willing to use aggressive tactics to get their way
+  4. Trying to control others rather than permit others to control them
+  5. NOT having a forceful or dominant personality [R]
+  6. Having members of the group know it is better to let him/her have his/her way
+  7. NOT enjoying having authority over other members of the group [R]
+  8. Having members of their group being afraid of them
+  9. Others NOT enjoying hanging out with them
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = rel_dominance)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$rel_dominance,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Influence expectancies of dominance
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>%
+  dplyr::select(exp_infl_2,
+         exp_infl_4,
+         exp_infl_6,
+         exp_infl_8,
+         exp_infl_9R,
+         exp_infl_11,
+         exp_infl_12R,
+         exp_infl_14,
+         exp_infl_16) %>%
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+Adapted from <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>
+
+What leads someone to have **influence?**
+
+Below, we list some attributes and behaviors that a person might display in a group of other people. What do you think is the impact of each of these things on whether that person **has influence over others in that group?**
+
+1 = *Strong negative effect on influence* to 7 = *Strong positive effect on influence*
+
+  1. Enjoying having control over other members of the group
+  2. Often trying to get their own way regardless of what others in the group may want
+  3. Being willing to use aggressive tactics to get their way
+  4. Trying to control others rather than permit others to control them
+  5. NOT having a forceful or dominant personality [R]
+  6. Having members of the group know it is better to let him/her have his/her way
+  7. NOT enjoying having authority over other members of the group [R]
+  8. Having members of their group being afraid of them
+  9. Others NOT enjoying hanging out with them
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = infl_dominance)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$infl_dominance,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Relationship motivations at work
+
+Mean score of the following two items:
+
+  1. In your work life, to what extent do you care about having good relationships with the people you work with? (1 = *I don't care about this at all* to 5 = *I care about this a great deal*)
+  2. In your work life, to what extent would it bother you if you did NOT have good relationships with other people at work? (1 = *I would not be bothered at all if I didn't have good relationships* to 5 = *I would be greatly bothered if I didn't have good relationships*)
+
+```{r,include=FALSE}
+cormat <- df_s1_elg %>% 
+  dplyr::select(rel_care,rel_bother) %>% 
+  cor()
+
+correlation = cormat[1,2]
+```
+
+*r* = `r round(correlation,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = care_rel)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,5,1),
+                     limits = c(1,5)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$care_rel,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+# Additional measures
+
+## Prestige strategies
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>%
+  dplyr::select(self_1,
+         self_3,
+         self_5R,
+         self_7,
+         self_10,
+         self_13,
+         self_15) %>%
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+From <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>
+
+We're now going to shift to some of your other experiences at work.
+
+Please indicate the extent to which each statement below accurately describes you at work, using any of the points on the 7 point scale...
+
+1 = *Not at all* to 7 = *Very much*
+
+  1. My peers at work respect and admire me
+  2. Others at work always expect me to be successful
+  3. Others do NOT value my opinion at work [R]
+  4. I am held in high esteem by those I know at work
+  5. I am considered an expert on some matters by others at work
+  6. My unique talents and abilities are recognized by others at work
+  7. Others seek my advice on a variety of matters at work
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = self_prestige)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$self_prestige,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Relationship expectancies of prestige
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>%
+  dplyr::select(exp_rel_1,
+         exp_rel_3,
+         exp_rel_5R,
+         exp_rel_7,
+         exp_rel_10,
+         exp_rel_13,
+         exp_rel_15) %>%
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+Adapted from <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>
+
+What leads someone to have good **relationships?**
+
+Below, we list some attributes and behaviors that a person might display in a group of other people. What do you think is the impact of each of these things on whether that person **has good relationships with others in that group?**
+
+1 = *Strong negative effect on relationships* to 7 = *Strong positive effect on relationships*
+
+  1. Having members of their group respect and admire them
+  2. Having members of their group always expect him/her to be successful.
+  3. Having members of their group do NOT value their opinion [R]
+  4. Being held in high esteem by members of the group
+  5. Being considered an expert on some matters by members of the group
+  6. Having their unique talents and abilities are recognized by others in the group
+  7. Having members of their group seek their advice on a variety of matters
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = rel_prestige)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$rel_prestige,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Influence expectancies of prestige
+
+```{r,include=F}
+alpha_score <- df_s1_elg %>%
+  dplyr::select(exp_infl_1,
+         exp_infl_3,
+         exp_infl_5R,
+         exp_infl_7,
+         exp_infl_10,
+         exp_infl_13,
+         exp_infl_15) %>%
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+Adapted from <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>
+
+What leads someone to have **influence?**
+
+Below, we list some attributes and behaviors that a person might display in a group of other people. What do you think is the impact of each of these things on whether that person **has influence over others in that group?**
+
+1 = *Strong negative effect on influence* to 7 = *Strong positive effect on influence*
+
+  1. Having members of their group respect and admire them
+  2. Having members of their group always expect him/her to be successful.
+  3. Having members of their group do NOT value their opinion [R]
+  4. Being held in high esteem by members of the group
+  5. Being considered an expert on some matters by members of the group
+  6. Having their unique talents and abilities are recognized by others in the group
+  7. Having members of their group seek their advice on a variety of matters
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = infl_prestige)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$infl_prestige,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Influence motivations at work
+
+Mean score of the following two items:
+
+  1. In your work life, to what extent do you care about having influence over the people you work with? (1 = *I don't care about having influence at all* to 5 = *I care about having influence a great deal*)
+  2. In your work life, to what extent would it bother you if you did NOT have much influence of other people at work? (1 = *I would not be bothered at all if I didn't have influence* to 5 = *I would be greatly bothered if I didn't have influence*)
+
+```{r,include=FALSE}
+cormat <- df_s1_elg %>% 
+  dplyr::select(infl_care,infl_bother) %>% 
+  cor()
+
+correlation = cormat[1,2]
+```
+
+*r* = `r round(correlation,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s1_elg %>% 
+  ggplot(aes(x = care_infl)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,5,1),
+                     limits = c(1,5)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s1_elg$care_infl,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+# Correlations
+
+<a href="./app/index.html" target="_blank" rel="noopener"
+     style="background:#0b69ff;color:white;padding:0.55em 0.9em;border-radius:8px;text-decoration:none;">
+    EXPLORE CORRELATIONS ↗
+  </a>
+
+**Key:**
+
+  1. CWV: Competitive worldview
+  2. ZSB: Zero-sum beliefs
+  3. copri: Cooperaitve primal beliefs
+  4. self_dominance: Dominance strategies
+  5. self_prestige: Prestige strategies
+  6. rel_dominance: Relationship expectancies of dominance
+  7. rel_prestige: Relationship expectancies of prestige
+  8. infl_dominance: Influence expectancies of dominance
+  9. infl_prestige: Influence expectancies of prestige
+  10. TOPS_coer: Coercive theories of power
+  11. TOPS_coll: Collaborative theories of power
+  12. care_rel: Relationship motivations at work
+  13. care_infl: Influence motivations at work
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(9,9)}
+df_s1_elg %>% 
+  dplyr::select(CWV,
+                ZSB,
+                copri,
+                self_dominance,
+                self_prestige,
+                rel_dominance,
+                rel_prestige,
+                infl_dominance,
+                infl_prestige,
+                TOPS_coer,
+                TOPS_coll,
+                care_rel,
+                care_infl) %>%
+  corPlot(upper = TRUE,stars = TRUE,xsrt = 270)
+```
