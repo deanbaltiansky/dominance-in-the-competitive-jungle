@@ -24,6 +24,17 @@ We test this claim in five complementary preregistered studies. In Study 1 (N = 
 
 # Study 1
 
+<div style="margin-top: 0;">
+  <p style="margin:0 0 12px 0;">
+    <a href="./studies/study-1/index.html" target="_blank" rel="noopener"
+       style="background:#0b69ff;color:white;padding:0.55em 0.9em;border-radius:8px;text-decoration:none;display:inline-block;margin:0;">
+      FULL REPORT ↗
+    </a>
+  </p>
+</div>
+
+
+
 # Study 2
 
 # Study 3A
