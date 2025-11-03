@@ -1,0 +1,62 @@
+---
+title: "Relational dominance | October 2025F: de-id"
+author: "Dean Baltiansky"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+#load packages
+library(tidyverse)
+
+#read in raw data
+df_raw_char <- read.csv("~/Google Drive/My Drive/dominance/oct-2025f/data/recd_oct25f_raw_char.csv")
+
+df_raw_num <- read.csv("~/Google Drive/My Drive/dominance/oct-2025f/data/recd_oct25f_raw_num.csv")
+```
+
+removing first 2 rows
+
+```{r}
+df_raw_num <- df_raw_num %>% 
+  slice(-(1:2))
+```
+
+removing ineligible character variables from numeric df and attaching those variables from character df (by ResponseID)
+
+```{r}
+df_raw <- df_raw_num %>% 
+  dplyr::select(-c(message_choice,Employment_1:Employment_9,gender,race_1:race_6,income,edu)) %>% 
+  left_join(df_raw_char %>% dplyr::select(ResponseId,
+                                          message_choice,
+                                   Employment_1:Employment_9,
+                                   gender,
+                                   race_1:race_6,
+                                   income,
+                                   edu),
+            by = "ResponseId")
+```
+
+removing identifiable information and adding PID's
+
+```{r}
+df_raw_deid <- df_raw %>% 
+  dplyr::select(Status,Progress:Finished,consent:feedback,MID_aff:edu) %>% 
+  mutate(PID = row_number()) %>% 
+  dplyr::select(PID,everything())
+```
+
+writing de-id df to drive
+
+```{r}
+write.csv(df_raw_deid,"~/Google Drive/My Drive/dominance/oct-2025f/data/df_raw_deid.csv",row.names = F)
+```
+
+for bonus
+
+```{r}
+df_raw_char %>% 
+  select(connectID,message_choice,message_aff,message_dom) %>% 
+  slice(-c(1:2)) %>% 
+  mutate(message_sent = ifelse(message_choice == "aff",message_aff,message_dom)) %>% 
+  write.csv("managers_messagessent.csv",row.names = F)
+```
