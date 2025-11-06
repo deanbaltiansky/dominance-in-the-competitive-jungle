@@ -48,6 +48,7 @@ library(diagram)
 library(factoextra)
 library(SnowballC)
 library(hunspell)
+library(effectsize)
 library(quanteda)
 
 repo_url <- "https://raw.githubusercontent.com/deanbaltiansky/dominance-in-the-competitive-jungle/main/study-1/data/"
@@ -1017,8 +1018,8 @@ df_s1_elg %>%
 **Key:**
 
   1. CWV: Competitive worldview
-  2. ZSB: Zero-sum beliefs
-  3. copri: Cooperaitve primal beliefs
+  2. ZSB: Status zero-sum beliefs
+  3. copri: Cooperative primal beliefs
   4. self_dominance: Dominance strategies
   5. self_prestige: Prestige strategies
   6. rel_dominance: Relationship expectancies of dominance
@@ -1031,5 +1032,58 @@ df_s1_elg %>%
   13. care_infl: Influence motivations at work
 
 # Linear Models
+
+Here, I report the models that ended up in the paper. Feel free to explore different linear models here:\
+\
+<a href="./lm-table-app/index.html" target="_blank" rel="noopener"
+     style="background:#0b69ff;color:white;padding:0.55em 0.9em;border-radius:8px;text-decoration:none;">
+    EXPLORE MODELS ↗
+  </a>
+
+## Linear Model 1
+
+**Predictor:** Competitive worldview.
+
+**Outcome:** Dominance strategies.
+
+**Controls:** Status zero-sum beliefs, cooperative primal beliefs, relationship concerns, coercive theories of power, collaborative theories of power, age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+```{r,echo=FALSE,results='asis',warning=FALSE,message=F,fig.align='left'}
+m1 <- lm(self_dominance ~ CWV + ZSB + copri + rel_care + TOPS_coer + TOPS_coll + age + white + man + edu_num + income_num,data = df_s1_elg)
+
+eta_table <- eta_squared(m1)
+etas_for_table <- c(NA,eta_table$Eta2_partial)
+apa_lm <- apa_print(m1)
+table_for_print <- apa_lm$table %>% 
+  mutate(eta2 = round(etas_for_table,3))
+
+kbl(table_for_print) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Linear Model 2
+
+**Predictor:** Competitive worldview.
+
+**Outcome:** Relationship expectancies of dominance.
+
+**Controls:** Status zero-sum beliefs, cooperative primal beliefs, relationship concerns, coercive theories of power, collaborative theories of power, age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+```{r,echo=FALSE,results='asis',warning=FALSE,message=F,fig.align='left'}
+m1 <- lm(rel_dominance ~ CWV + ZSB + copri + rel_care + TOPS_coer + TOPS_coll + age + white + man + edu_num + income_num,data = df_s1_elg)
+
+eta_table <- eta_squared(m1)
+etas_for_table <- c(NA,eta_table$Eta2_partial)
+apa_lm <- apa_print(m1)
+table_for_print <- apa_lm$table %>% 
+  mutate(eta2 = round(etas_for_table,3))
+
+kbl(table_for_print) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
 
 # Mediation Models
