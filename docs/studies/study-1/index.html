@@ -3067,9 +3067,8 @@ EXPLORE CORRELATIONS ↗ </a></p>
 <div id="linear-models" class="section level1">
 <h1>Linear Models</h1>
 <p>Here, I report the models that ended up in the paper. Feel free to
-explore different linear models here:<br />
-<br />
-<a href="./lm-table-app/index.html" target="_blank" rel="noopener" style="background:#0b69ff;color:white;padding:0.55em 0.9em;border-radius:8px;text-decoration:none;">
+explore different linear models:</p>
+<p><a href="./lm-table-app/index.html" target="_blank" rel="noopener" style="background:#0b69ff;color:white;padding:0.55em 0.9em;border-radius:8px;text-decoration:none;">
 EXPLORE MODELS ↗ </a></p>
 <div id="linear-model-1" class="section level2">
 <h2>Linear Model 1</h2>
@@ -3704,6 +3703,334 @@ Income num
 </div>
 <div id="mediation-models" class="section level1">
 <h1>Mediation Models</h1>
+<p>Here, I report the mediation models from the paper. Feel free to
+explore more:</p>
+<p><a href="./mediation-app/index.html" target="_blank" rel="noopener" style="background:#0b69ff;color:white;padding:0.55em 0.9em;border-radius:8px;text-decoration:none;">
+EXPLORE MEDIATION MODELS ↗ </a></p>
+<div id="mediation-model-1" class="section level2">
+<h2>Mediation Model 1</h2>
+<p><strong>Predictor:</strong> Competitive worldview.</p>
+<p><strong>Mediator:</strong> Relationship expectancies.</p>
+<p><strong>Outcome:</strong> Dominance strategies.</p>
+<p><strong>Controls:</strong> Status zero-sum beliefs, cooperative
+primal beliefs, relationship concerns, coercive theories of power,
+collaborative theories of power, age, race (white = 1; non-white = 0),
+gender (man = 1; non-man = 0), education (numeric), income
+(numeric).</p>
+<p><strong>Model specification:</strong> 10,000-bootstrap mediation
+model, using the <em>mediation</em> package.</p>
+<table class="table table-hover" style="color: black; width: auto !important; ">
+<thead>
+<tr>
+<th style="text-align:left;">
+Effect
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+X95..CI.Lower
+</th>
+<th style="text-align:right;">
+X95..CI.Upper
+</th>
+<th style="text-align:right;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ACME (indirect)
+</td>
+<td style="text-align:right;">
+0.334
+</td>
+<td style="text-align:right;">
+0.224
+</td>
+<td style="text-align:right;">
+0.460
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ADE (direct)
+</td>
+<td style="text-align:right;">
+0.412
+</td>
+<td style="text-align:right;">
+0.216
+</td>
+<td style="text-align:right;">
+0.607
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total Effect
+</td>
+<td style="text-align:right;">
+0.746
+</td>
+<td style="text-align:right;">
+0.568
+</td>
+<td style="text-align:right;">
+0.926
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Prop. Mediated
+</td>
+<td style="text-align:right;">
+0.448
+</td>
+<td style="text-align:right;">
+0.295
+</td>
+<td style="text-align:right;">
+0.652
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="mediation-model-2" class="section level2">
+<h2>Mediation Model 2</h2>
+<p><strong>Predictor:</strong> Competitive worldview.</p>
+<p><strong>Mediators:</strong> Relationship expectancies (1-path),
+influence expectancies (2-path).</p>
+<p><strong>Outcome:</strong> Dominance strategies.</p>
+<p><strong>Controls:</strong> Status zero-sum beliefs, cooperative
+primal beliefs, relationship concerns, coercive theories of power,
+collaborative theories of power, age, race (white = 1; non-white = 0),
+gender (man = 1; non-man = 0), education (numeric), income
+(numeric).</p>
+<p><strong>Model specification:</strong> 10,000-bootstrapped
+simultaneous mediation model, using the <em>lavaan</em> package.</p>
+<table class="table table-hover" style="color: black; width: auto !important; ">
+<thead>
+<tr>
+<th style="text-align:left;">
+label
+</th>
+<th style="text-align:right;">
+est
+</th>
+<th style="text-align:right;">
+se
+</th>
+<th style="text-align:right;">
+ci.lower
+</th>
+<th style="text-align:right;">
+ci.upper
+</th>
+<th style="text-align:right;">
+pvalue
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+a1
+</td>
+<td style="text-align:right;">
+0.6006189
+</td>
+<td style="text-align:right;">
+0.0702396
+</td>
+<td style="text-align:right;">
+0.4652950
+</td>
+<td style="text-align:right;">
+0.7394055
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a2
+</td>
+<td style="text-align:right;">
+0.4233135
+</td>
+<td style="text-align:right;">
+0.1009041
+</td>
+<td style="text-align:right;">
+0.2240847
+</td>
+<td style="text-align:right;">
+0.6216185
+</td>
+<td style="text-align:right;">
+0.0000273
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b1
+</td>
+<td style="text-align:right;">
+0.5116453
+</td>
+<td style="text-align:right;">
+0.0879131
+</td>
+<td style="text-align:right;">
+0.3378030
+</td>
+<td style="text-align:right;">
+0.6815165
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b2
+</td>
+<td style="text-align:right;">
+0.0842991
+</td>
+<td style="text-align:right;">
+0.0600314
+</td>
+<td style="text-align:right;">
+-0.0325359
+</td>
+<td style="text-align:right;">
+0.2041472
+</td>
+<td style="text-align:right;">
+0.1602445
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c_prime
+</td>
+<td style="text-align:right;">
+0.4025318
+</td>
+<td style="text-align:right;">
+0.0981283
+</td>
+<td style="text-align:right;">
+0.2125383
+</td>
+<td style="text-align:right;">
+0.5957380
+</td>
+<td style="text-align:right;">
+0.0000409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ind1
+</td>
+<td style="text-align:right;">
+0.3073039
+</td>
+<td style="text-align:right;">
+0.0640027
+</td>
+<td style="text-align:right;">
+0.1900847
+</td>
+<td style="text-align:right;">
+0.4381691
+</td>
+<td style="text-align:right;">
+0.0000016
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ind2
+</td>
+<td style="text-align:right;">
+0.0356850
+</td>
+<td style="text-align:right;">
+0.0264868
+</td>
+<td style="text-align:right;">
+-0.0150517
+</td>
+<td style="text-align:right;">
+0.0913713
+</td>
+<td style="text-align:right;">
+0.1778928
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ind_total
+</td>
+<td style="text-align:right;">
+0.3429888
+</td>
+<td style="text-align:right;">
+0.0609974
+</td>
+<td style="text-align:right;">
+0.2314142
+</td>
+<td style="text-align:right;">
+0.4660672
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total
+</td>
+<td style="text-align:right;">
+0.7455206
+</td>
+<td style="text-align:right;">
+0.0903836
+</td>
+<td style="text-align:right;">
+0.5674891
+</td>
+<td style="text-align:right;">
+0.9223913
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
