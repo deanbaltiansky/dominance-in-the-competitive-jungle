@@ -1,0 +1,19 @@
+var,label,description
+CWV,Competitive Worldview,A view of the social world as a constant battle for status and resources
+ZSB,Status Zero-Sum Beliefs,"The belief that if one gains status, others lose status"
+copri,Cooperative Primal Beliefs,The belief that people are naturally and inherently cooperative
+TOPS_coer,Coercive Theories of Power,"Lay theories according to which the way to maintain power is through coercion, intimidation, and force"
+TOPS_coll,Collaborative Theories of Power,"Lay theories according to which the way to maintain power is through virtue, respect, and empathy"
+self_dominance,Dominance Strategies,"The tendency to use threat, intimidation, and coercion at work"
+self_prestige,Prestige Strategies,"The tendency to use respect, esteem, and talent at work"
+rel_dominance,Relationship Expectancies of Dominance,Expected Relationship impact of dominance (1 = Strong Negative Effect on Relationships to 7 = Strong Positive Effect on Relationships)
+rel_prestige,Relationship Expectancies of Prestige,Expected Relationship impact of prestige (1 = Strong Negative Effect on Relationships to 7 = Strong Positive Effect on Relationships)
+infl_dominance,Influence Expectancies of Dominance,Expected Influence impact of dominance (1 = Strong Negative Effect on Influence to 7 = Strong Positive Effect on Influence)
+infl_prestige,Influence Expectancies of Prestige,Expected Influence impact of prestige (1 = Strong Negative Effect on Influence to 7 = Strong Positive Effect on Influence)
+care_rel,Relationship Motivations at Work,The extent to which one cares about relationships at work (1 = I don't care about this at all to 5 = I care about this a great deal)
+care_infl,Influence Motivations at Work,The extent to which one cares about influence at work (1 = I don't care about this at all to 5 = I care about this a great deal)
+man,Gender,Man = 1; Non-man = 0
+white,Race,White = 1; Non-white = 0
+age,Age,Age
+income_num,Income,Income: numeric
+edu_num,Education,Education: numeric
