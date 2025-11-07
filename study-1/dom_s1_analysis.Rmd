@@ -94,14 +94,14 @@ The purpose of Study 1 is to provide discriminant and internal validity to our t
 We want to make sure the design properly addresses the following:
 
   1. Competitive worldview, relationship expectancies of dominance, and dominance are all measured correctly. To that end, we only use well-validated scales:
-    a. Competitive worldview: a view of the social world as a constant battle for status and resources (*It's a dog-eat-dog world where you have to be ruthless at times*; <a href="https://doi.org/10.1016/j.jrp.2012.10.004" target="_blank"> Perry et al., 2013</a>).
-    b. Dominance strategies: use of dominant strategies at attain and maintain status at work (*I am willing to use aggressive tactics to get my way at work*; <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank"> Cheng et al., 2010</a>).
+    a. Competitive worldview: a view of the social world as a constant battle for status and resources (*It's a dog-eat-dog world where you have to be ruthless at times*; <a href="https://doi.org/10.1016/j.jrp.2012.10.004" target="_blank">Perry et al., 2013</a>).
+    b. Dominance strategies: use of dominant strategies at attain and maintain status at work (*I am willing to use aggressive tactics to get my way at work*; <a href="https://doi.org/10.1016/j.evolhumbehav.2010.02.004" target="_blank">Cheng et al., 2010</a>).
     c. Relationship expectancies of dominance strategies: the same behaviors of the dominance strategies scale were assessed for their perceived impact on relationships with others at work. 
   2. It is competitive worldview that predicts relationship expectancies and dominance, over and above related constructs (that have been shown in the past to predict dominance). Therefore, we statistically control for the following: 
-    a. Status zero-sum beliefs: the belief that if one gains status, others lose status (<a href="https://doi.org/10.1037/xge0001282" target="_blank"> Andrews-Fearon & Davidai, 2023</a>).
+    a. Status zero-sum beliefs: the belief that if one gains status, others lose status (<a href="https://doi.org/10.1037/xge0001282" target="_blank">Andrews-Fearon & Davidai, 2023</a>).
     b. Cooperative primal beliefs: the belief that people are naturally and inherently cooperative (<a href="https://doi.org/10.1037/pas0000639" target="_blank"> Clifton et al., 2019</a>).
-    c. Coercive theories power: lay theories according to which the way to maintain power is through coercion, intimidation, and force (<a href="https://doi.org/10.1037/pspi0000345" target="_blank"> ten Brinke & Keltner, 2022</a>).
-    d. Collaborative theories of power: lay theories according to which the way to maintain power is through virtue, respect, and empathy (<a href="https://doi.org/10.1037/pspi0000345" target="_blank"> ten Brinke & Keltner, 2022</a>).
+    c. Coercive theories power: lay theories according to which the way to maintain power is through coercion, intimidation, and force (<a href="https://doi.org/10.1037/pspi0000345" target="_blank">ten Brinke & Keltner, 2022</a>).
+    d. Collaborative theories of power: lay theories according to which the way to maintain power is through virtue, respect, and empathy (<a href="https://doi.org/10.1037/pspi0000345" target="_blank">ten Brinke & Keltner, 2022</a>).
   3. It is relationship expectancies, and not relationship motivations or influence expectancies, that is driving the effect of competitive worldview on dominance strategies at work. To that end, we measure:
     a. Relationship motivations: two items measuring the extent to which participants care about having good relationships at work.
     b. Influence expectancies of dominance strategies: the same behaviors of the dominance strategies scale were assessed for their perceived impact on influence over others at work.
