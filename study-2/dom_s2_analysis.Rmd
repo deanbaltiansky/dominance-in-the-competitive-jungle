@@ -6,7 +6,7 @@ output:
     toc: true
     toc_float: true
     code_folding: hide
-knit: (function(input_file, encoding) { rmarkdown::render(input_file, encoding = encoding, output_file = 'index.html', output_dir = here::here('docs','studies','study-1')); })
+knit: (function(input_file, encoding) { rmarkdown::render(input_file, encoding = encoding, output_file = 'index.html', output_dir = here::here('docs','studies','study-2')); })
 ---
 
 ```{r,include=FALSE}
@@ -474,13 +474,6 @@ df_s2_elg %>%
 
 # Linear Random Effects Models
 
-Here, I report the models that ended up in the paper. Feel free to explore different models:
-
-<a href="./lm-table-app/index.html" target="_blank" rel="noopener"
-     style="background:#0b69ff;color:white;padding:0.55em 0.9em;border-radius:8px;text-decoration:none;">
-    EXPLORE MODELS ↗
-  </a>
-
 ## Linear Random Effects Model 1
 
 **Predictor:** Competitive worldview.
@@ -587,32 +580,86 @@ kbl(med_results) %>%
 **Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
 
 ```{r,echo=FALSE,results='asis',warning=FALSE,message=F,fig.align='left'}
-model <- '
-  # Mediator regressions
-  impact_rel  ~ a1 * CWV + age + white + man + edu_num + income_num
-  impact_comp ~ a2 * CWV + age + white + man + edu_num + income_num
+predictor  <- "CWV"
+outcome    <- "own_likeman"
+mediators  <- c("impact_rel", "impact_comp")
+controls   <- c("age","white","man","edu_num","income_num")
+cluster_id <- "og_pid"
 
-  # Outcome regression
-  own_likeman ~ b1 * impact_rel + b2 * impact_comp + c_prime * CWV + age + white + man + edu_num + income_num
+vars_needed <- c(outcome, predictor, mediators, controls, cluster_id)
+df_cc <- df_s2_elg[complete.cases(df_s2_elg[, vars_needed]), vars_needed]
 
-  # Indirect effects
-  ind1 := a1 * b1
-  ind2 := a2 * b2
-  ind_total := ind1 + ind2
-  total := c_prime + ind_total
-'
+f_c <- as.formula(
+  paste0(outcome, " ~ ", predictor, " + ",
+         paste(controls, collapse = " + "),
+         " + (1|", cluster_id, ")")
+)
 
-fit <- sem(model, data = df_s2_elg,
-           cluster = "og_pid",
-           se = "robust.cluster")
+m_c <- lmerTest::lmer(f_c, data = df_cc)
 
-estimates <- parameterEstimates(fit, standardized = TRUE, ci = TRUE, boot.ci.type = "perc")
+c_row <- {
+  sm <- summary(m_c)
+  est <- sm$coefficients[predictor, "Estimate"]
+  se  <- sm$coefficients[predictor, "Std. Error"]
+  p   <- sm$coefficients[predictor, "Pr(>|t|)"]
+  ci <- suppressMessages(confint(m_c, parm = predictor, method = "Wald"))
+  tibble(
+    label = "c",
+    est = as.numeric(est),
+    se  = as.numeric(se),
+    ci.lower = as.numeric(ci[1]),
+    ci.upper = as.numeric(ci[2]),
+    pvalue = as.numeric(p)
+  )
+}
 
-effects_table <- estimates %>%
-  filter(label %in% c("a1","a2","b1","b2","c_prime","ind1","ind2","ind_total","total")) %>%
-  dplyr::select(label, est, se, ci.lower, ci.upper, pvalue)
+controls_str <- paste(controls, collapse = " + ")
 
-kbl(effects_table) %>% 
+model_med <- paste0(
+  mediators[1], " ~ a1*", predictor, " + ", controls_str, "\n",
+  mediators[2], " ~ a2*", predictor, " + ", controls_str, "\n\n",
+  mediators[1], " ~~ ", mediators[2], "\n\n",
+  outcome, " ~ b1*", mediators[1], " + b2*", mediators[2],
+  " + c_prime*", predictor, " + ", controls_str, "\n\n",
+  "ind1 := a1*b1\n",
+  "ind2 := a2*b2\n",
+  "ind_total := ind1 + ind2\n"
+)
+
+fit_med <- sem(
+  model_med,
+  data = df_cc,
+  cluster = cluster_id,
+  se = "robust.cluster"
+)
+
+keep_labels <- c("a1","a2","b1","b2","c_prime","ind1","ind2","ind_total")
+
+lavaan_rows <- parameterEstimates(fit_med, ci = TRUE) %>%
+  filter(label %in% keep_labels) %>%
+  select(label, est, se, ci.lower, ci.upper, pvalue)
+
+
+cprime_est <- lavaan_rows$est[lavaan_rows$label == "c_prime"]
+indtot_est <- lavaan_rows$est[lavaan_rows$label == "ind_total"]
+
+total_row <- c_row %>%
+  mutate(label = "total")
+
+final_table <- bind_rows(
+  lavaan_rows,
+  c_row,
+  total_row
+) %>%
+  mutate(
+    label = factor(
+      label,
+      levels = c("a1","a2","b1","b2","c","c_prime","ind1","ind2","ind_total","total")
+    )
+  ) %>%
+  arrange(label)
+
+kbl(final_table) %>% 
   kable_styling(bootstrap_options = "hover",
                 full_width = F,
                 position = "left")
