@@ -455,7 +455,7 @@ df_s2_elg %>%
                                    face = "bold"))
 ```
 
-# Linear Random Effects Models
+# Analysis
 
 ## Linear Random Effects Model 1
 

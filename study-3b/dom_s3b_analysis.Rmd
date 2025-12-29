@@ -33,18 +33,19 @@ library(papaja)
 library(kableExtra)
 library(effectsize)
 library(lavaan)
+library(lme4)
 library(tidyverse)
 
-repo_url <- "https://raw.githubusercontent.com/deanbaltiansky/dominance-in-the-competitive-jungle/main/study-3a/data/"
+repo_url <- "https://raw.githubusercontent.com/deanbaltiansky/dominance-in-the-competitive-jungle/main/study-3b/data/"
 
-df_s3a_employees <- readr::read_csv(paste0(repo_url,"df_s3a_employees.csv"), show_col_types = FALSE)
-df_s3a_managers <- readr::read_csv(paste0(repo_url,"df_s3a_managers.csv"), show_col_types = FALSE)
+df_s3b_employees <- readr::read_csv(paste0(repo_url,"df_s3b_employees.csv"), show_col_types = FALSE)
+df_s3b_managers <- readr::read_csv(paste0(repo_url,"df_s3b_managers.csv"), show_col_types = FALSE)
 
 set.seed(20240914)
 ```
 
 ```{r,include=FALSE}
-df_s3a_managers <- df_s3a_managers  %>% 
+df_s3b_managers <- df_s3b_managers  %>% 
   mutate(income = factor(income,c("$0-$20,000",
                                   "$20,001-$40,000",
                                   "$40,001-$60,000",
@@ -68,7 +69,7 @@ df_s3a_managers <- df_s3a_managers  %>%
          white = ifelse(race == "white",1,0)) %>% 
   mutate(is_dom = ifelse(message_choice == "dom",1,0))
 
-df_s3a_employees <- df_s3a_employees %>% 
+df_s3b_employees <- df_s3b_employees %>% 
     mutate(income = factor(income,c("$0-$20,000",
                                   "$20,001-$40,000",
                                   "$40,001-$60,000",
@@ -93,17 +94,17 @@ df_s3a_employees <- df_s3a_employees %>%
 
 # Background
 
-While Studies 1 and 2 supported our model, neither featured a behavioral measure of dominance. Study 3A sought such evidence with a novel paradigm, asking some participants to role-play as managers attempting to induce employees to complete a relatively unpleasant task and other participants to role-play as employees being induced to perform the task (a common dynamic in Study 2’s reports of real-world dominance). This paradigm allowed us to test again for the predictive role of competitive worldviews and relationship expectancies. Importantly, it also offered an empirical opportunity to evaluate errors in expectancies. Studies 1 and 2 do not shed light on whether, say, those with a competitive worldview are underestimating relationship costs of dominance or, alternatively, if those without a competitive worldview are overestimating such costs. The question remains: Are those high in competitive worldview or dominance overly optimistic or are those low in competitive worldview or dominance overly pessimistic about people’s responses to dominant behavior—or both? In the current study, we can assess this by comparing managerial predictions of relationship outcomes to employees’ actual behavior and self-reported attitudes towards their manager.
+It is possible that the effects in Study 3A are due to peculiarities of the messages we crafted and/or that these messages are somehow extreme or unnatural. Study 3B addressed this concern by using crowd-sourced dominant and affiliative messages in the same paradigm as Study 3A, randomly assigning pairs of messages to manager-playing participants. We expected our predicted results from Study 3A to replicate. This variation also allowed us to explore the direction of expectancy errors with naturalistic messages rather than researcher-generated ones.
 
 # Procedure
 
-The study was conducted in two phases: One in which one sample of participants acted as managers and one in which another sample of participants acted as employees. Our design was informed by the behavioral reports gathered in Study 2, which tended to revolve around managers pressing employees to complete unpleasant work with some threat for noncompliance or underperformance. Phase 1 participants were asked to imagine that they were managers in a mid-sized company facing a tough task to be assigned to their employee—another participant on Connect by CloudResearch. The employee’s performance on the task determined the manager’s bonus (up to \$2 in addition to a base pay of \$1.60). The employee also had a \$2 “pending” bonus, but the amount they would receive would be determined by their manager (who could factor in the employee’s performance as much or little as they wanted). Importantly, these bonuses were independent: the amount awarded to the employee had no impact on the amount awarded to the manager. After receiving information about the task and bonus payment structure, manager participants were told that they could motivate their employees with one of two messages, one of which was dominant, and the other non-dominant. For each message, the managers predicted how well the employee would perform in the task and how the message would impact the employee’s attitude towards them. Then, the manager selected the message they wished to send to the employee. After selecting the message, they indicated if they believed the employee would nominate them for an additional paid “good manager” survey. Next, they indicated the bonus they wished to grant the employee for every possible level of performance in the task. Finally, they completed a measure of competitive worldview.
+The procedure and measures of Study 3B were almost identical to those of Study 3A, with one important exception : The messages. Instead of just seeing and rating the same two messages, manager-playing participants were shown one of 15 dominant messages and one of 22 affiliative messages. Messages were collected from an initial sample of 30 participants on Connect by CloudResearch. They were given context about the design, asked to write one dominant message and one affiliative message on behalf of the manager, and told that the writer of the best-performing message (the message that yields the highest score from employee-playing participants) would receive a \$50 bonus. Then, messages were rated by a separate sample of 100 participants on Connect by CloudResearch. Participants rated messages’ dominance and affiliation on 1-7 scales ; messages that received mean ratings of 4.5 to 6.5 on these dimensions were selected for their respective pools.
 
-Phase 2 participants were asked to imagine that they were employees in a mid-sized firm. We informed them that they had been randomly assigned a manager who had participated in a previous phase of the study. After reading about the scenario, the task, and the bonus payment structure (where the manager’s bonus depended on their performance, but their own bonus was independent, decided solely by the manager), participants were told that the manager chose to send them a message. They then read the message that the manager selected to send (either dominant or non-dominant) and indicated if they wanted to complete the task. If not, they answered a number of questions about the manager and ended the survey at the agreed-upon \$0.80 base pay. If yes, they began a five-round task (described below). After completing the task, they saw their score, indicated their attitudes about the manager, and were asked if they would recommend the manager for a paid “good manager” follow-up study. Finally, they were told how much the manager decided to grant them out of the \$2 pending bonus. See Figure 3 for a visual description of the procedure.
+In Phase 2, employee-playing participants were randomly assigned to see either one of 15 dominant messages or one of 22 affiliative messages. This way, regardless of the selection rate in the manager-playing phase, we collected enough responses from employee-playing participants for each type of message, enabling a proper comparison to ground truth.
  
 # Preregistered hypotheses
 
-This study was preregistered here: <a href="https://osf.io/8jzp5/overview?view_only=cbe1b5eb3a604f06b988ac9a3890053f" target="_blank">Open Science Framework</a>
+This study was preregistered here: <a href="https://osf.io/kr4mn/overview?view_only=5da48934c7c446b1b82458ada950fd87" target="_blank">Open Science Framework</a>
 
   1. Managers’ competitive worldview will be associated with the belief that dominant behavior will harm the relationship with the employee less, rather than more. 
   2. Managers’ competitive worldview will be positively associated with choice to behave dominantly toward their employees.
@@ -116,17 +117,17 @@ Participants were recruited through Connect by CloudResearch - an online partici
 ## Phase 1 Participants (Managers)
 
 ```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
-total_n <- df_s3a_managers %>% 
+total_n <- df_s3b_managers %>% 
   nrow()
 ```
 
 Total N = **`r total_n`**.
 
 ```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
-df_s3a_managers_elg <- df_s3a_managers %>% 
-  filter(elg == 1)
+df_s3b_managers_elg <- df_s3b_managers %>% 
+  filter(att_1 == 1)
 
-eligible_n = df_s3a_managers_elg %>% 
+eligible_n = df_s3b_managers_elg %>% 
   nrow()
 ```
 
@@ -135,7 +136,7 @@ Eligible N = **`r eligible_n`**.
 ### Race/Ethnicity
 
 ```{r,results='asis',echo=TRUE,warning=FALSE,message=FALSE}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   group_by(race) %>% 
   summarise(N = n()) %>% 
   ungroup() %>% 
@@ -151,7 +152,7 @@ df_s3a_managers_elg %>%
 ### Gender
 
 ```{r,echo=TRUE,results='asis',warning=FALSE}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   mutate(gender = ifelse(is.na(gender) | gender == "","other",gender)) %>% 
   group_by(gender) %>% 
   summarise(N = n()) %>% 
@@ -168,7 +169,7 @@ df_s3a_managers_elg %>%
 ### Age
 
 ```{r,echo=TRUE,results='asis',warning=FALSE}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   summarise(age_mean = round(mean(age,na.rm = T),2),
             age_sd = round(sd(age,na.rm = T),2)) %>% 
   kbl() %>% 
@@ -180,7 +181,7 @@ df_s3a_managers_elg %>%
 ### Education
 
 ```{r,echo=TRUE,results='asis',warning=FALSE}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   group_by(edu) %>% 
   summarise(N = n()) %>% 
   ungroup() %>% 
@@ -195,7 +196,7 @@ df_s3a_managers_elg %>%
 ### Income
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-median_income_num <- df_s3a_managers_elg %>% 
+median_income_num <- df_s3b_managers_elg %>% 
   summarise(median = median(income_num,na.rm = T))
 
 median_income <- median_income_num %>% 
@@ -214,7 +215,7 @@ median_income <- median_income_num %>%
   unlist() %>% 
   unname()
 
-df_s3a_managers_elg %>%
+df_s3b_managers_elg %>%
   ggplot(aes(x = income, fill = income == median_income)) +
   geom_bar(show.legend = FALSE) +
   scale_fill_manual(values = c("FALSE" = "grey66", "TRUE" = "red")) +
@@ -236,16 +237,16 @@ Median income: **`r median_income`**.
 ## Phase 2 Participants (Employees)
 
 ```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
-total_n <- df_s3a_employees %>% 
+total_n <- df_s3b_employees %>% 
   nrow()
 ```
 
 Total N = **`r total_n`**.
 
 ```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
-df_s3a_employees_elg <- df_s3a_employees
+df_s3b_employees_elg <- df_s3b_employees
 
-eligible_n = df_s3a_employees_elg %>% 
+eligible_n = df_s3b_employees_elg %>% 
   nrow()
 ```
 
@@ -254,7 +255,7 @@ Eligible N = **`r eligible_n`**.
 ### Race/Ethnicity
 
 ```{r,results='asis',echo=TRUE,warning=FALSE,message=FALSE}
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   group_by(race) %>% 
   summarise(N = n()) %>% 
   ungroup() %>% 
@@ -270,7 +271,7 @@ df_s3a_employees_elg %>%
 ### Gender
 
 ```{r,echo=TRUE,results='asis',warning=FALSE}
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   mutate(gender = ifelse(is.na(gender) | gender == "","other",gender)) %>% 
   group_by(gender) %>% 
   summarise(N = n()) %>% 
@@ -287,7 +288,7 @@ df_s3a_employees_elg %>%
 ### Age
 
 ```{r,echo=TRUE,results='asis',warning=FALSE}
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   summarise(age_mean = round(mean(age,na.rm = T),2),
             age_sd = round(sd(age,na.rm = T),2)) %>% 
   kbl() %>% 
@@ -299,7 +300,7 @@ df_s3a_employees_elg %>%
 ### Education
 
 ```{r,echo=TRUE,results='asis',warning=FALSE}
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   group_by(edu) %>% 
   summarise(N = n()) %>% 
   ungroup() %>% 
@@ -314,7 +315,7 @@ df_s3a_employees_elg %>%
 ### Income
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-median_income_num <- df_s3a_employees_elg %>% 
+median_income_num <- df_s3b_employees_elg %>% 
   summarise(median = median(income_num,na.rm = T))
 
 median_income <- median_income_num %>% 
@@ -333,7 +334,7 @@ median_income <- median_income_num %>%
   unlist() %>% 
   unname()
 
-df_s3a_employees_elg %>%
+df_s3b_employees_elg %>%
   ggplot(aes(x = income, fill = income == median_income)) +
   geom_bar(show.legend = FALSE) +
   scale_fill_manual(values = c("FALSE" = "grey66", "TRUE" = "red")) +
@@ -352,22 +353,66 @@ df_s3a_employees_elg %>%
 
 Median income: **`r median_income`**.
 
+# Messages
+
+Manager-playing participants were randomly shown one dominant message and one affiliative message. These messages were crowd-sourced by asking previous Connect by CloudResearch participants to write persuasive messages that fit the definitions of "dominant" and "affiliative" (later validated with a separate sample of participants). The writer of the message that ended up achieivng the highest score on the task from an employee-playing participant received a \$50 bonus. 
+
+## Dominant messages
+
+Write a short message (1-2 sentences) that attempts to motivate your employee by asserting your authority. Use coercive, domineering, threatening language.
+
+For example, you might stress consequences if they do not complete the task or remind them that you control their bonus. Write the most coercive, domineering, threatening message that you think will still motivate people to do the task.
+
+
+*character range: 50-500
+
+*paste disabled
+
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3b_managers_elg %>% 
+  select(message_dom) %>%
+  distinct() %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                position = "left") %>% 
+  scroll_box(width = "100%", height = "400px")
+
+```
+
+## Affiliative messages
+
+Write a short message (1-2 sentences) that attempts to motivate your employee by emphasizing your support. Use supportive, respectful, empathetic language.
+
+For example, you might ask politely, express appreciation, or highlight that you value their choice. Write the most supportive, respectful, empathetic message you can that you think will still motivate people to do the task.
+
+
+*character range: 50-500
+
+*paste disabled
+
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3b_managers_elg %>% 
+  select(message_aff) %>%
+  distinct() %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                position = "left") %>% 
+  scroll_box(width = "100%", height = "400px")
+
+```
+
 # Phase 1: Measures
 
-## Messages
+## Dominant messages
 
-Manager-playing participants were shown two messages: A dominant message and a non-dominant message. For each message, they indicated the expected impact it would have on the employee's attitude towards them, the employee's compliance with the task, and whether they believe the employee would nominate them for a "good manager" survey (in which they could win more bonus money) after completing the task.
-
-### Dominant message
-
-*By now you know the task at hand. It’s time to get in there and do your absolute best across all rounds. If you don’t complete it and do it well, you will not get the full bonus.*
-
-#### Relationship expectancy
+### Relationship expectancy
 
 What will be the impact of this message on your employee's attitude towards you? (1 = *Extremely Negative* to 7 = *Extremely Positive*)
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   ggplot(aes(x = attitude_dom)) +
   geom_histogram(fill = "lightblue",
                  color = NA,
@@ -375,7 +420,7 @@ df_s3a_managers_elg %>%
   scale_x_continuous(breaks = seq(1,7,1),
                      limits = c(0,8)) +
   ylab("count") +
-  geom_vline(xintercept = mean(df_s3a_managers_elg$attitude_dom,na.rm = T),
+  geom_vline(xintercept = mean(df_s3b_managers_elg$attitude_dom,na.rm = T),
              color = "black",
              linetype = "dashed",
              size = 1.1) +
@@ -391,12 +436,12 @@ df_s3a_managers_elg %>%
                                    face = "bold"))
 ```
 
-#### Compliance expectancy
+### Compliance expectancy
 
 If they choose to do the task after receiving your message, how well will they perform? Their performance can range from 0 points up to 50 points (for perfect performance).
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   ggplot(aes(x = comp_dom)) +
   geom_histogram(fill = "lightblue",
                  color = NA,
@@ -404,7 +449,7 @@ df_s3a_managers_elg %>%
   scale_x_continuous(breaks = seq(0,50,5),
                      limits = c(-5,55)) +
   ylab("count") +
-  geom_vline(xintercept = mean(df_s3a_managers_elg$comp_dom,na.rm = T),
+  geom_vline(xintercept = mean(df_s3b_managers_elg$comp_dom,na.rm = T),
              color = "black",
              linetype = "dashed",
              size = 1.1) +
@@ -420,7 +465,7 @@ df_s3a_managers_elg %>%
                                    face = "bold"))
 ```
 
-#### Predicted nomination for "good manager" survey
+### Predicted nomination for "good manager" survey
 
 We are planning a paid follow-up to this study.
 
@@ -432,7 +477,7 @@ Do you think your employee will recommend you as a participant in this "good man
 follow-up survey? (*No* = 0; *Yes* = 1)
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   ggplot(aes(x = nompred_dom)) +
   geom_histogram(fill = "lightblue",
                  color = NA,
@@ -440,7 +485,7 @@ df_s3a_managers_elg %>%
   scale_x_continuous(breaks = seq(0,1,1),
                      limits = c(-1,2)) +
   ylab("count") +
-  geom_vline(xintercept = mean(df_s3a_managers_elg$nompred_dom,na.rm = T),
+  geom_vline(xintercept = mean(df_s3b_managers_elg$nompred_dom,na.rm = T),
              color = "black",
              linetype = "dashed",
              size = 1.1) +
@@ -456,24 +501,22 @@ df_s3a_managers_elg %>%
                                    face = "bold"))
 ```
 
-### Non-Dominant message
+## Affiliative messages
 
-*Your job in this task is to select the shapes that match the description. Please make sure you look at them carefully. It would be great if you can get as many of them right as possible.*
-
-#### Relationship expectancy
+### Relationship expectancy
 
 What will be the impact of this message on your employee's attitude towards you? (1 = *Extremely Negative* to 7 = *Extremely Positive*)
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-df_s3a_managers_elg %>% 
-  ggplot(aes(x = attitude_nondom)) +
+df_s3b_managers_elg %>% 
+  ggplot(aes(x = attitude_aff)) +
   geom_histogram(fill = "lightblue",
                  color = NA,
                  binwidth = 1) +
   scale_x_continuous(breaks = seq(1,7,1),
                      limits = c(0,8)) +
   ylab("count") +
-  geom_vline(xintercept = mean(df_s3a_managers_elg$attitude_nondom,na.rm = T),
+  geom_vline(xintercept = mean(df_s3b_managers_elg$attitude_aff,na.rm = T),
              color = "black",
              linetype = "dashed",
              size = 1.1) +
@@ -489,20 +532,20 @@ df_s3a_managers_elg %>%
                                    face = "bold"))
 ```
 
-#### Compliance expectancy
+### Compliance expectancy
 
 If they choose to do the task after receiving your message, how well will they perform? Their performance can range from 0 points up to 50 points (for perfect performance).
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-df_s3a_managers_elg %>% 
-  ggplot(aes(x = comp_nondom)) +
+df_s3b_managers_elg %>% 
+  ggplot(aes(x = comp_aff)) +
   geom_histogram(fill = "lightblue",
                  color = NA,
                  binwidth = 5) +
   scale_x_continuous(breaks = seq(0,50,5),
                      limits = c(-5,55)) +
   ylab("count") +
-  geom_vline(xintercept = mean(df_s3a_managers_elg$comp_nondom,na.rm = T),
+  geom_vline(xintercept = mean(df_s3b_managers_elg$comp_aff,na.rm = T),
              color = "black",
              linetype = "dashed",
              size = 1.1) +
@@ -518,7 +561,7 @@ df_s3a_managers_elg %>%
                                    face = "bold"))
 ```
 
-#### Predicted nomination for "good manager" survey
+### Predicted nomination for "good manager" survey
 
 We are planning a paid follow-up to this study.
 
@@ -530,15 +573,15 @@ Do you think your employee will recommend you as a participant in this "good man
 follow-up survey? (*No* = 0; *Yes* = 1)
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-df_s3a_managers_elg %>% 
-  ggplot(aes(x = nompred_nondom)) +
+df_s3b_managers_elg %>% 
+  ggplot(aes(x = nompred_aff)) +
   geom_histogram(fill = "lightblue",
                  color = NA,
                  binwidth = 1) +
   scale_x_continuous(breaks = seq(0,1,1),
                      limits = c(-1,2)) +
   ylab("count") +
-  geom_vline(xintercept = mean(df_s3a_managers_elg$nompred_nondom,na.rm = T),
+  geom_vline(xintercept = mean(df_s3b_managers_elg$nompred_aff,na.rm = T),
              color = "black",
              linetype = "dashed",
              size = 1.1) +
@@ -559,7 +602,7 @@ df_s3a_managers_elg %>%
 After indicating their predictions, manager-playing participants were asked to select the message that they wish to send to their employees.
 
 ```{r,echo=TRUE,results='asis',warning=FALSE}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   group_by(message_choice) %>% 
   summarise(N = n()) %>% 
   ungroup() %>% 
@@ -577,7 +620,7 @@ df_s3a_managers_elg %>%
 Finally, they completed the Competitive Worldview scale.
 
 ```{r,include=F}
-alpha_score <- df_s3a_managers_elg %>% 
+alpha_score <- df_s3b_managers_elg %>% 
   dplyr::select(CWV_1:CWV_10R) %>% 
   psych::alpha()
 
@@ -602,14 +645,14 @@ R indicates a reverse-scored item.
 Cronbach's alpha = `r round(alpha,2)`
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-df_s3a_managers_elg %>% 
+df_s3b_managers_elg %>% 
   ggplot(aes(x = CWV)) +
   geom_density(fill = "lightblue",
                  color = NA) +
   scale_x_continuous(breaks = seq(1,7,1),
                      limits = c(1,7)) +
   ylab("density") +
-  geom_vline(xintercept = mean(df_s3a_managers_elg$CWV,na.rm = T),
+  geom_vline(xintercept = mean(df_s3b_managers_elg$CWV,na.rm = T),
              color = "black",
              linetype = "dashed",
              size = 1.1) +
@@ -629,24 +672,22 @@ df_s3a_managers_elg %>%
 
 The primary preregistered analyses were conducted on the manager-playing participant sample.
 
-## Model 1: Logistic Regression
+## Model 1: Random Effects Logistic Regression
 
 **Predictor:** Competitive worldview.
 
 **Outcome:** Selection of dominant message.
 
-**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+**Random Effect:** Dominant message shown.
 
 ```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
-m1 <- glm(is_dom ~ CWV + age + man + white + income_num + edu_num,
-               data = df_s3a_managers_elg,
+m1 <- glmer(is_dom ~ CWV + (1 | MID_dom),
+               data = df_s3b_managers_elg,
                family = binomial)
 
-eta_table <- eta_squared(m1)
-etas_for_table <- c(NA,eta_table$Eta2_partial)
+
 apa_lm <- apa_print(m1)
-table_for_print <- apa_lm$table %>% 
-  mutate(eta2 = round(etas_for_table,3))
+table_for_print <- apa_lm$table
 
 kbl(table_for_print) %>% 
   kable_styling(bootstrap_options = "hover",
@@ -654,16 +695,16 @@ kbl(table_for_print) %>%
                 position = "left")
 ```
 
-## Model 2: Linear Model
+## Model 2: Random Effects Linear Model
 
 **Predictor:** Competitive worldview.
 
 **Outcome:** Relationship expectancy of dominant message.
 
-**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+**Random Effect:** Dominant message shown.
 
 ```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
-m1 <- lm(attitude_dom ~ CWV + age + man + white + income_num + edu_num,data = df_s3a_managers_elg)
+m1 <- lmerTest::lmer(attitude_dom ~ CWV + (1 | MID_dom),data = df_s3b_managers_elg)
 
 eta_table <- eta_squared(m1)
 etas_for_table <- c(NA,eta_table$Eta2_partial)
@@ -677,24 +718,22 @@ kbl(table_for_print) %>%
                 position = "left")
 ```
 
-## Model 3: Logistic Regression
+## Model 3: Random Effects Logistic Regression
 
 **Predictor:** Competitive worldview.
 
 **Outcome:** Predicted nomination for "good manager" survey in case of sending the dominant message.
 
-**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+**Random Effect:** Dominant message shown.
 
 ```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
-m1 <- glm(nompred_dom ~ CWV + age + man + white + income_num + edu_num,
-               data = df_s3a_managers_elg,
+m1 <- glmer(nompred_dom ~ CWV + (1 | MID_dom),
+               data = df_s3b_managers_elg,
                family = binomial)
 
-eta_table <- eta_squared(m1)
-etas_for_table <- c(NA,eta_table$Eta2_partial)
+
 apa_lm <- apa_print(m1)
-table_for_print <- apa_lm$table %>% 
-  mutate(eta2 = round(etas_for_table,3))
+table_for_print <- apa_lm$table
 
 kbl(table_for_print) %>% 
   kable_styling(bootstrap_options = "hover",
@@ -702,7 +741,7 @@ kbl(table_for_print) %>%
                 position = "left")
 ```
 
-## Model 4: Mediation model
+## Model 4: Random Effects Mediation model
 
 **Predictor:** Competitive worldview.
 
@@ -710,24 +749,24 @@ kbl(table_for_print) %>%
 
 **Outcome:** Selection of dominant message.
 
-**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+**Random Effect:** Dominant message shown.
 
 **Bootstraps:** 10,000
 
 ```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
 # Step 1: Fit the mediator model
-med.fit <- lm(attitude_dom ~ CWV + age + man + white + income_num + edu_num,
-              data = df_s3a_managers_elg)
+med.fit <- lme4::lmer(attitude_dom ~ CWV + (1|MID_dom), df_s3b_managers_elg, REML=F)
 
 # Step 2: Fit the outcome model
-out.fit <- lm(is_dom ~ attitude_dom + CWV + age + man + white + income_num + edu_num,
-              data = df_s3a_managers_elg)
+out.fit <- lme4::lmer(is_dom ~ attitude_dom + CWV + (1|MID_dom), df_s3b_managers_elg, REML=F)
 
 # Step 3: Conduct the mediation analysis
 med.out <- mediation::mediate(med.fit, out.fit,
                    treat = "CWV",
                    mediator = "attitude_dom",
-                   boot = TRUE, sims = 10000) 
+                   boot = FALSE, 
+                   sims = 10000,
+                   boot.ci.type="bca")
 
 # Step 4: Create table
 med_results <- data.frame(
@@ -744,7 +783,7 @@ kbl(med_results) %>%
                 position = "left")
 ```
 
-## Model 5: Mediation model
+## Model 5: Random Effects Mediation model
 
 **Predictor:** Competitive worldview.
 
@@ -752,24 +791,24 @@ kbl(med_results) %>%
 
 **Outcome:** Selection of dominant message.
 
-**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+**Random Effect:** Dominant message shown.
 
 **Bootstraps:** 10,000
 
 ```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
 # Step 1: Fit the mediator model
-med.fit <- lm(nompred_dom ~ CWV + age + man + white + income_num + edu_num,
-              data = df_s3a_managers_elg)
+med.fit <- lme4::lmer(nompred_dom ~ CWV + (1|MID_dom), df_s3b_managers_elg, REML=F)
 
 # Step 2: Fit the outcome model
-out.fit <- lm(is_dom ~ nompred_dom + CWV + age + man + white + income_num + edu_num,
-              data = df_s3a_managers_elg)
+out.fit <- lme4::lmer(is_dom ~ nompred_dom + CWV + (1|MID_dom), df_s3b_managers_elg, REML=F)
 
 # Step 3: Conduct the mediation analysis
 med.out <- mediation::mediate(med.fit, out.fit,
                    treat = "CWV",
                    mediator = "nompred_dom",
-                   boot = TRUE, sims = 10000) 
+                   boot = FALSE, 
+                   sims = 10000,
+                   boot.ci.type="bca")
 
 # Step 4: Create table
 med_results <- data.frame(
@@ -786,7 +825,7 @@ kbl(med_results) %>%
                 position = "left")
 ```
 
-## Model 6: Simultaneous mediation model
+## Model 6: Simultaneous random effects mediation model
 
 **Predictor:** Competitive worldview.
 
@@ -796,29 +835,29 @@ kbl(med_results) %>%
 
 **Outcome:** Selection of dominant message.
 
-**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+**Random Effect:** Dominant message shown.
 
 **Bootstraps:** 10,000
 
 ```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
 model <- '
-  # Regressions for mediators
-  attitude_dom  ~ a1 * CWV + age + white + man + edu_num + income_num
-  comp_dom ~ a2 * CWV + age + white + man + edu_num + income_num
+  # Mediator regressions
+  attitude_dom  ~ a1 * CWV
+  comp_dom ~ a2 * CWV
 
-  # Regression for outcome
-  is_dom ~ b1 * attitude_dom + b2 * comp_dom  + c_prime * CWV + age + white + man + edu_num + income_num
+  # Outcome regression
+  is_dom ~ b1 * attitude_dom + b2 * comp_dom + c_prime * CWV
 
   # Indirect effects
   ind1 := a1 * b1
   ind2 := a2 * b2
-
-  # Total indirect and total effect
   ind_total := ind1 + ind2
   total := c_prime + ind_total
 '
 
-fit <- sem(model, data = df_s3a_managers_elg, se = "bootstrap", bootstrap = 10000)
+fit <- sem(model, data = df_s3b_managers_elg,
+           cluster = "message_dom",
+           se = "robust.cluster")
 
 estimates <- parameterEstimates(fit, standardized = TRUE, ci = TRUE, boot.ci.type = "perc")
 
@@ -835,7 +874,8 @@ kbl(effects_table) %>%
 # Phase 2: Measures
 
 ```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
-att_outcome <- df_s3a_employees_elg %>%  
+att_outcome <- df_s3b_employees_elg %>%  
+  filter(!is.na(is_dom)) %>% 
   group_by(is_dom) %>% 
   summarise(N = n(),
             attitude = mean(attitude,na.rm = T),
@@ -847,7 +887,8 @@ att_outcome <- df_s3a_employees_elg %>%
   unlist() %>% 
   unname()
 
-rec_outcome <- df_s3a_employees_elg %>%  
+rec_outcome <- df_s3b_employees_elg %>%  
+  filter(!is.na(is_dom)) %>% 
   group_by(is_dom) %>% 
   summarise(N = n(),
             attitude = mean(attitude,na.rm = T),
@@ -859,7 +900,8 @@ rec_outcome <- df_s3a_employees_elg %>%
   unlist() %>% 
   unname()
 
-df_s3a_employees_elg %>%  
+df_s3b_employees_elg %>%  
+  filter(!is.na(is_dom)) %>% 
   group_by(is_dom) %>% 
   summarise(N = n(),
             attitude = mean(attitude,na.rm = T),
@@ -869,10 +911,10 @@ df_s3a_employees_elg %>%
   pivot_longer(-c(is_dom),
                names_to = " ",
                values_to = "values") %>% 
-  mutate(is_dom = ifelse(is_dom == 0,"nondom","dom")) %>% 
+  mutate(is_dom = ifelse(is_dom == 0,"aff","dom")) %>% 
   pivot_wider(names_from = is_dom,
               values_from = values) %>% 
-  mutate(nondom = round(nondom,2),
+  mutate(aff = round(aff,2),
          dom = round(dom,2)) %>% 
   kbl() %>% 
   kable_styling(bootstrap_options = "hover",
@@ -882,17 +924,17 @@ df_s3a_employees_elg %>%
 
 ## Dominant message
 
-Employees who received the dominant message (*N* = 150) were asked to complete the task and, indicate their attitude towards the manager, and were then given the chance to nominate them for the "good manager" survey.
+Employees who received the dominant message (*N* = 152) were asked to complete the task and, indicate their attitude towards the manager, and were then given the chance to nominate them for the "good manager" survey.
 
 ### Compliance
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-mean_points <- df_s3a_employees_elg %>% 
+mean_points <- df_s3b_employees_elg %>% 
   filter(is_dom == 1) %>% 
   summarise(mean = mean(points,na.rm = T)) %>% 
   pull()
 
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   filter(is_dom == 1) %>% 
   ggplot(aes(x = points)) +
   geom_histogram(fill = "lightblue",
@@ -920,12 +962,12 @@ df_s3a_employees_elg %>%
 ### Relationship (attitude)
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-mean_att <- df_s3a_employees_elg %>% 
+mean_att <- df_s3b_employees_elg %>% 
   filter(is_dom == 1) %>% 
   summarise(mean = mean(attitude,na.rm = T)) %>% 
   pull()
 
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   filter(is_dom == 1) %>% 
   ggplot(aes(x = attitude)) +
   geom_histogram(fill = "lightblue",
@@ -953,12 +995,12 @@ df_s3a_employees_elg %>%
 ### Nomination for "good manager" survey
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-mean_rec <- df_s3a_employees_elg %>% 
+mean_rec <- df_s3b_employees_elg %>% 
   filter(is_dom == 1) %>% 
   summarise(mean = mean(rec,na.rm = T)) %>% 
   pull()
 
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   filter(is_dom == 1) %>% 
   ggplot(aes(x = rec)) +
   geom_histogram(fill = "lightblue",
@@ -983,19 +1025,19 @@ df_s3a_employees_elg %>%
                                    face = "bold"))
 ```
 
-## Non-dominant message
+## Affiliative message
 
-Employees who received the non-dominant message (*N* = 149) were asked to complete the task and, indicate their attitude towards the manager, and were then given the chance to nominate them for the "good manager" survey.
+Employees who received the affiliative message (*N* = 149) were asked to complete the task and, indicate their attitude towards the manager, and were then given the chance to nominate them for the "good manager" survey.
 
 ### Compliance
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-mean_points <- df_s3a_employees_elg %>% 
+mean_points <- df_s3b_employees_elg %>% 
   filter(is_dom == 0) %>% 
   summarise(mean = mean(points,na.rm = T)) %>% 
   pull()
 
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   filter(is_dom == 0) %>% 
   ggplot(aes(x = points)) +
   geom_histogram(fill = "lightblue",
@@ -1023,12 +1065,12 @@ df_s3a_employees_elg %>%
 ### Relationship (attitude)
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-mean_att <- df_s3a_employees_elg %>% 
+mean_att <- df_s3b_employees_elg %>% 
   filter(is_dom == 0) %>% 
   summarise(mean = mean(attitude,na.rm = T)) %>% 
   pull()
 
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   filter(is_dom == 0) %>% 
   ggplot(aes(x = attitude)) +
   geom_histogram(fill = "lightblue",
@@ -1056,12 +1098,12 @@ df_s3a_employees_elg %>%
 ### Nomination for "good manager" survey
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
-mean_rec <- df_s3a_employees_elg %>% 
+mean_rec <- df_s3b_employees_elg %>% 
   filter(is_dom == 0) %>% 
   summarise(mean = mean(rec,na.rm = T)) %>% 
   pull()
 
-df_s3a_employees_elg %>% 
+df_s3b_employees_elg %>% 
   filter(is_dom == 0) %>% 
   ggplot(aes(x = rec)) +
   geom_histogram(fill = "lightblue",
@@ -1096,7 +1138,7 @@ Analyzing if manager CWV is associated with accuracy in relationship expectancy 
 Comparison point: `r att_outcome`
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(7,4)}
-df_forJNI <- df_s3a_managers_elg %>% 
+df_forJNI <- df_s3b_managers_elg %>% 
   select(PID,CWV,attitude_dom) %>% 
   mutate(truth = att_outcome) %>% 
   rename(pred = attitude_dom) %>% 
@@ -1183,7 +1225,7 @@ Analyzing if CWV is associated with accuracy in nomination for the "good manager
 Comparison point: `r att_outcome`
 
 ```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(7,4)}
-df_forJNI <- df_s3a_managers_elg %>% 
+df_forJNI <- df_s3b_managers_elg %>% 
   select(PID,CWV,nompred_dom) %>% 
   mutate(truth = rec_outcome) %>% 
   rename(pred = nompred_dom) %>% 
