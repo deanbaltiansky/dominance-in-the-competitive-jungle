@@ -1,0 +1,1266 @@
+---
+title: "Dominance Through the Lens of a Competitive Worldview"
+subtitle: "Study 3B: Analysis Report"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+knit: (function(input_file, encoding) { rmarkdown::render(input_file, encoding = encoding, output_file = 'index.html', output_dir = here::here('docs','studies','study-3b')); })
+---
+
+```{r,include=FALSE}
+detachAllPackages <- function() {
+
+  basic.packages <- c("package:stats","package:graphics","package:grDevices","package:utils","package:datasets","package:methods","package:base")
+
+  package.list <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+
+  package.list <- setdiff(package.list,basic.packages)
+
+  if (length(package.list)>0)  for (package in package.list) detach(package, character.only=TRUE)
+
+}
+
+detachAllPackages()
+```
+
+```{r,include=FALSE}
+library(psych)
+library(mediation)
+library(interactions)
+library(papaja)
+library(kableExtra)
+library(effectsize)
+library(lavaan)
+library(tidyverse)
+
+repo_url <- "https://raw.githubusercontent.com/deanbaltiansky/dominance-in-the-competitive-jungle/main/study-3a/data/"
+
+df_s3a_employees <- readr::read_csv(paste0(repo_url,"df_s3a_employees.csv"), show_col_types = FALSE)
+df_s3a_managers <- readr::read_csv(paste0(repo_url,"df_s3a_managers.csv"), show_col_types = FALSE)
+
+set.seed(20240914)
+```
+
+```{r,include=FALSE}
+df_s3a_managers <- df_s3a_managers  %>% 
+  mutate(income = factor(income,c("$0-$20,000",
+                                  "$20,001-$40,000",
+                                  "$40,001-$60,000",
+                                  "$60,001-$80,000",
+                                  "$80,001-$100,000",
+                                  "$100,001-$120,000",
+                                  "$120,001-$140,000",
+                                  "$140,001-$160,000",
+                                  "$160,001-$180,000",
+                                  "$180,001-$200,000",
+                                  "Over $200,000")),
+         edu = factor(edu,c("noHS",
+                            "GED",
+                            "2yearColl",
+                            "4yearColl",
+                            "MA",
+                            "PHD")),
+         income_num = as.numeric(income),
+         edu_num = as.numeric(edu),
+         man = ifelse(gender == "man",1,0),
+         white = ifelse(race == "white",1,0)) %>% 
+  mutate(is_dom = ifelse(message_choice == "dom",1,0))
+
+df_s3a_employees <- df_s3a_employees %>% 
+    mutate(income = factor(income,c("$0-$20,000",
+                                  "$20,001-$40,000",
+                                  "$40,001-$60,000",
+                                  "$60,001-$80,000",
+                                  "$80,001-$100,000",
+                                  "$100,001-$120,000",
+                                  "$120,001-$140,000",
+                                  "$140,001-$160,000",
+                                  "$160,001-$180,000",
+                                  "$180,001-$200,000",
+                                  "Over $200,000")),
+         edu = factor(edu,c("noHS",
+                            "GED",
+                            "2yearColl",
+                            "4yearColl",
+                            "MA",
+                            "PHD")),
+         income_num = as.numeric(income),
+         edu_num = as.numeric(edu))
+```
+
+
+# Background
+
+While Studies 1 and 2 supported our model, neither featured a behavioral measure of dominance. Study 3A sought such evidence with a novel paradigm, asking some participants to role-play as managers attempting to induce employees to complete a relatively unpleasant task and other participants to role-play as employees being induced to perform the task (a common dynamic in Study 2’s reports of real-world dominance). This paradigm allowed us to test again for the predictive role of competitive worldviews and relationship expectancies. Importantly, it also offered an empirical opportunity to evaluate errors in expectancies. Studies 1 and 2 do not shed light on whether, say, those with a competitive worldview are underestimating relationship costs of dominance or, alternatively, if those without a competitive worldview are overestimating such costs. The question remains: Are those high in competitive worldview or dominance overly optimistic or are those low in competitive worldview or dominance overly pessimistic about people’s responses to dominant behavior—or both? In the current study, we can assess this by comparing managerial predictions of relationship outcomes to employees’ actual behavior and self-reported attitudes towards their manager.
+
+# Procedure
+
+The study was conducted in two phases: One in which one sample of participants acted as managers and one in which another sample of participants acted as employees. Our design was informed by the behavioral reports gathered in Study 2, which tended to revolve around managers pressing employees to complete unpleasant work with some threat for noncompliance or underperformance. Phase 1 participants were asked to imagine that they were managers in a mid-sized company facing a tough task to be assigned to their employee—another participant on Connect by CloudResearch. The employee’s performance on the task determined the manager’s bonus (up to \$2 in addition to a base pay of \$1.60). The employee also had a \$2 “pending” bonus, but the amount they would receive would be determined by their manager (who could factor in the employee’s performance as much or little as they wanted). Importantly, these bonuses were independent: the amount awarded to the employee had no impact on the amount awarded to the manager. After receiving information about the task and bonus payment structure, manager participants were told that they could motivate their employees with one of two messages, one of which was dominant, and the other non-dominant. For each message, the managers predicted how well the employee would perform in the task and how the message would impact the employee’s attitude towards them. Then, the manager selected the message they wished to send to the employee. After selecting the message, they indicated if they believed the employee would nominate them for an additional paid “good manager” survey. Next, they indicated the bonus they wished to grant the employee for every possible level of performance in the task. Finally, they completed a measure of competitive worldview.
+
+Phase 2 participants were asked to imagine that they were employees in a mid-sized firm. We informed them that they had been randomly assigned a manager who had participated in a previous phase of the study. After reading about the scenario, the task, and the bonus payment structure (where the manager’s bonus depended on their performance, but their own bonus was independent, decided solely by the manager), participants were told that the manager chose to send them a message. They then read the message that the manager selected to send (either dominant or non-dominant) and indicated if they wanted to complete the task. If not, they answered a number of questions about the manager and ended the survey at the agreed-upon \$0.80 base pay. If yes, they began a five-round task (described below). After completing the task, they saw their score, indicated their attitudes about the manager, and were asked if they would recommend the manager for a paid “good manager” follow-up study. Finally, they were told how much the manager decided to grant them out of the \$2 pending bonus. See Figure 3 for a visual description of the procedure.
+ 
+# Preregistered hypotheses
+
+This study was preregistered here: <a href="https://osf.io/8jzp5/overview?view_only=cbe1b5eb3a604f06b988ac9a3890053f" target="_blank">Open Science Framework</a>
+
+  1. Managers’ competitive worldview will be associated with the belief that dominant behavior will harm the relationship with the employee less, rather than more. 
+  2. Managers’ competitive worldview will be positively associated with choice to behave dominantly toward their employees.
+  3. The relationship between managers’ competitive worldview and choice to behave dominantly will be at least partially explained by the expected impact of that dominant behavior on the relationship with the employee.
+  
+# Data collection
+
+Participants were recruited through Connect by CloudResearch - an online participant pool.
+
+## Phase 1 Participants (Managers)
+
+```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
+total_n <- df_s3a_managers %>% 
+  nrow()
+```
+
+Total N = **`r total_n`**.
+
+```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
+df_s3a_managers_elg <- df_s3a_managers %>% 
+  filter(elg == 1)
+
+eligible_n = df_s3a_managers_elg %>% 
+  nrow()
+```
+
+Eligible N = **`r eligible_n`**.
+
+### Race/Ethnicity
+
+```{r,results='asis',echo=TRUE,warning=FALSE,message=FALSE}
+df_s3a_managers_elg %>% 
+  group_by(race) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  arrange(desc(Perc)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Gender
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3a_managers_elg %>% 
+  mutate(gender = ifelse(is.na(gender) | gender == "","other",gender)) %>% 
+  group_by(gender) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  arrange(desc(Perc)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Age
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3a_managers_elg %>% 
+  summarise(age_mean = round(mean(age,na.rm = T),2),
+            age_sd = round(sd(age,na.rm = T),2)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Education
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3a_managers_elg %>% 
+  group_by(edu) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Income
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+median_income_num <- df_s3a_managers_elg %>% 
+  summarise(median = median(income_num,na.rm = T))
+
+median_income <- median_income_num %>% 
+  mutate(income_char = case_when(median == 1 ~ "$0-$20,000",
+                                 median == 2 ~ "$20,001-$40,000",
+                                 median == 3 ~ "$40,001-$60,000",
+                                 median == 4 ~ "$60,001-$80,000",
+                                 median == 5 ~ "$80,001-$100,000",
+                                 median == 6 ~ "$100,001-$120,000",
+                                 median == 7 ~ "$120,001-$140,000",
+                                 median == 8 ~ "$140,001-$160,000",
+                                 median == 9 ~ "$160,001-$180,000",
+                                 median == 10 ~ "$180,001-$200,000",
+                                 median == 11 ~ "Over $200,000")) %>% 
+  select(income_char) %>% 
+  unlist() %>% 
+  unname()
+
+df_s3a_managers_elg %>%
+  ggplot(aes(x = income, fill = income == median_income)) +
+  geom_bar(show.legend = FALSE) +
+  scale_fill_manual(values = c("FALSE" = "grey66", "TRUE" = "red")) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  coord_flip()
+```
+
+Median income: **`r median_income`**.
+
+## Phase 2 Participants (Employees)
+
+```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
+total_n <- df_s3a_employees %>% 
+  nrow()
+```
+
+Total N = **`r total_n`**.
+
+```{r,echo=FALSE,results='asis',warning=FALSE,message=F}
+df_s3a_employees_elg <- df_s3a_employees
+
+eligible_n = df_s3a_employees_elg %>% 
+  nrow()
+```
+
+Eligible N = **`r eligible_n`**.
+
+### Race/Ethnicity
+
+```{r,results='asis',echo=TRUE,warning=FALSE,message=FALSE}
+df_s3a_employees_elg %>% 
+  group_by(race) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  arrange(desc(Perc)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Gender
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3a_employees_elg %>% 
+  mutate(gender = ifelse(is.na(gender) | gender == "","other",gender)) %>% 
+  group_by(gender) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  arrange(desc(Perc)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Age
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3a_employees_elg %>% 
+  summarise(age_mean = round(mean(age,na.rm = T),2),
+            age_sd = round(sd(age,na.rm = T),2)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Education
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3a_employees_elg %>% 
+  group_by(edu) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+### Income
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+median_income_num <- df_s3a_employees_elg %>% 
+  summarise(median = median(income_num,na.rm = T))
+
+median_income <- median_income_num %>% 
+  mutate(income_char = case_when(median == 1 ~ "$0-$20,000",
+                                 median == 2 ~ "$20,001-$40,000",
+                                 median == 3 ~ "$40,001-$60,000",
+                                 median == 4 ~ "$60,001-$80,000",
+                                 median == 5 ~ "$80,001-$100,000",
+                                 median == 6 ~ "$100,001-$120,000",
+                                 median == 7 ~ "$120,001-$140,000",
+                                 median == 8 ~ "$140,001-$160,000",
+                                 median == 9 ~ "$160,001-$180,000",
+                                 median == 10 ~ "$180,001-$200,000",
+                                 median == 11 ~ "Over $200,000")) %>% 
+  select(income_char) %>% 
+  unlist() %>% 
+  unname()
+
+df_s3a_employees_elg %>%
+  ggplot(aes(x = income, fill = income == median_income)) +
+  geom_bar(show.legend = FALSE) +
+  scale_fill_manual(values = c("FALSE" = "grey66", "TRUE" = "red")) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  coord_flip()
+```
+
+Median income: **`r median_income`**.
+
+# Phase 1: Measures
+
+## Messages
+
+Manager-playing participants were shown two messages: A dominant message and a non-dominant message. For each message, they indicated the expected impact it would have on the employee's attitude towards them, the employee's compliance with the task, and whether they believe the employee would nominate them for a "good manager" survey (in which they could win more bonus money) after completing the task.
+
+### Dominant message
+
+*By now you know the task at hand. It’s time to get in there and do your absolute best across all rounds. If you don’t complete it and do it well, you will not get the full bonus.*
+
+#### Relationship expectancy
+
+What will be the impact of this message on your employee's attitude towards you? (1 = *Extremely Negative* to 7 = *Extremely Positive*)
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s3a_managers_elg %>% 
+  ggplot(aes(x = attitude_dom)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(0,8)) +
+  ylab("count") +
+  geom_vline(xintercept = mean(df_s3a_managers_elg$attitude_dom,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+#### Compliance expectancy
+
+If they choose to do the task after receiving your message, how well will they perform? Their performance can range from 0 points up to 50 points (for perfect performance).
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s3a_managers_elg %>% 
+  ggplot(aes(x = comp_dom)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,50,5),
+                     limits = c(-5,55)) +
+  ylab("count") +
+  geom_vline(xintercept = mean(df_s3a_managers_elg$comp_dom,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+#### Predicted nomination for "good manager" survey
+
+We are planning a paid follow-up to this study.
+
+For the follow-up survey, we are specifically interested in targeting good managers - those who show an ability to effectively lead their workers to achieve goals while fostering a positive work environment.
+
+After the task, but before they know your bonus decision, we will ask your employee if they would recommend you for this study.
+
+Do you think your employee will recommend you as a participant in this "good manager" paid
+follow-up survey? (*No* = 0; *Yes* = 1)
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s3a_managers_elg %>% 
+  ggplot(aes(x = nompred_dom)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(0,1,1),
+                     limits = c(-1,2)) +
+  ylab("count") +
+  geom_vline(xintercept = mean(df_s3a_managers_elg$nompred_dom,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+### Non-Dominant message
+
+*Your job in this task is to select the shapes that match the description. Please make sure you look at them carefully. It would be great if you can get as many of them right as possible.*
+
+#### Relationship expectancy
+
+What will be the impact of this message on your employee's attitude towards you? (1 = *Extremely Negative* to 7 = *Extremely Positive*)
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s3a_managers_elg %>% 
+  ggplot(aes(x = attitude_nondom)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(0,8)) +
+  ylab("count") +
+  geom_vline(xintercept = mean(df_s3a_managers_elg$attitude_nondom,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+#### Compliance expectancy
+
+If they choose to do the task after receiving your message, how well will they perform? Their performance can range from 0 points up to 50 points (for perfect performance).
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s3a_managers_elg %>% 
+  ggplot(aes(x = comp_nondom)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,50,5),
+                     limits = c(-5,55)) +
+  ylab("count") +
+  geom_vline(xintercept = mean(df_s3a_managers_elg$comp_nondom,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+#### Predicted nomination for "good manager" survey
+
+We are planning a paid follow-up to this study.
+
+For the follow-up survey, we are specifically interested in targeting good managers - those who show an ability to effectively lead their workers to achieve goals while fostering a positive work environment.
+
+After the task, but before they know your bonus decision, we will ask your employee if they would recommend you for this study.
+
+Do you think your employee will recommend you as a participant in this "good manager" paid
+follow-up survey? (*No* = 0; *Yes* = 1)
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s3a_managers_elg %>% 
+  ggplot(aes(x = nompred_nondom)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(0,1,1),
+                     limits = c(-1,2)) +
+  ylab("count") +
+  geom_vline(xintercept = mean(df_s3a_managers_elg$nompred_nondom,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Message Selection
+
+After indicating their predictions, manager-playing participants were asked to select the message that they wish to send to their employees.
+
+```{r,echo=TRUE,results='asis',warning=FALSE}
+df_s3a_managers_elg %>% 
+  group_by(message_choice) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  mutate(Perc = round(100*(N/sum(N)),2)) %>% 
+  ungroup() %>% 
+  arrange(desc(Perc)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Competitive worldview
+
+Finally, they completed the Competitive Worldview scale.
+
+```{r,include=F}
+alpha_score <- df_s3a_managers_elg %>% 
+  dplyr::select(CWV_1:CWV_10R) %>% 
+  psych::alpha()
+
+alpha <- alpha_score$total[1]
+```
+
+1 = *Strongly Disagree* to 7 = *Strongly Agree*
+
+  1. It’s a dog-eat-dog world where you have to be ruthless at times
+  2. Life is not governed by the "survival of the fittest." We should let compassion and moral laws be our guide [R]
+  3. There is really no such thing as "right" and "wrong." It all boils down to what you can get away with
+  4. One of the most useful skills a person should develop is how to look someone straight in the eye and lie convincingly
+  5. It is better to be loved than to be feared [R]
+  6. My knowledge and experience tell me that the social world we live in is basically a competitive "jungle" in which the fittest survive and succeed, in which power, wealth, and winning are everything, and might is right
+  7. Do unto others as you would have them do unto you, and never do anything unfair to someone else [R]
+  8. Basically people are objects to be quietly and coolly manipulated for one’s own benefit
+  9. Honesty is the best policy in all cases [R]
+  10. One should give others the benefit of the doubt. Most people are trustworthy if you have faith in them [R]
+
+R indicates a reverse-scored item.
+
+Cronbach's alpha = `r round(alpha,2)`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+df_s3a_managers_elg %>% 
+  ggplot(aes(x = CWV)) +
+  geom_density(fill = "lightblue",
+                 color = NA) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(1,7)) +
+  ylab("density") +
+  geom_vline(xintercept = mean(df_s3a_managers_elg$CWV,na.rm = T),
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+# Phase 1: Analysis
+
+The primary preregistered analyses were conducted on the manager-playing participant sample.
+
+## Model 1: Logistic Regression
+
+**Predictor:** Competitive worldview.
+
+**Outcome:** Selection of dominant message.
+
+**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
+m1 <- glm(is_dom ~ CWV + age + man + white + income_num + edu_num,
+               data = df_s3a_managers_elg,
+               family = binomial)
+
+eta_table <- eta_squared(m1)
+etas_for_table <- c(NA,eta_table$Eta2_partial)
+apa_lm <- apa_print(m1)
+table_for_print <- apa_lm$table %>% 
+  mutate(eta2 = round(etas_for_table,3))
+
+kbl(table_for_print) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Model 2: Linear Model
+
+**Predictor:** Competitive worldview.
+
+**Outcome:** Relationship expectancy of dominant message.
+
+**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
+m1 <- lm(attitude_dom ~ CWV + age + man + white + income_num + edu_num,data = df_s3a_managers_elg)
+
+eta_table <- eta_squared(m1)
+etas_for_table <- c(NA,eta_table$Eta2_partial)
+apa_lm <- apa_print(m1)
+table_for_print <- apa_lm$table %>% 
+  mutate(eta2 = round(etas_for_table,3))
+
+kbl(table_for_print) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Model 3: Logistic Regression
+
+**Predictor:** Competitive worldview.
+
+**Outcome:** Predicted nomination for "good manager" survey in case of sending the dominant message.
+
+**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
+m1 <- glm(nompred_dom ~ CWV + age + man + white + income_num + edu_num,
+               data = df_s3a_managers_elg,
+               family = binomial)
+
+eta_table <- eta_squared(m1)
+etas_for_table <- c(NA,eta_table$Eta2_partial)
+apa_lm <- apa_print(m1)
+table_for_print <- apa_lm$table %>% 
+  mutate(eta2 = round(etas_for_table,3))
+
+kbl(table_for_print) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Model 4: Mediation model
+
+**Predictor:** Competitive worldview.
+
+**Mediator:** Relationship expectancy of dominant message.
+
+**Outcome:** Selection of dominant message.
+
+**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+**Bootstraps:** 10,000
+
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
+# Step 1: Fit the mediator model
+med.fit <- lm(attitude_dom ~ CWV + age + man + white + income_num + edu_num,
+              data = df_s3a_managers_elg)
+
+# Step 2: Fit the outcome model
+out.fit <- lm(is_dom ~ attitude_dom + CWV + age + man + white + income_num + edu_num,
+              data = df_s3a_managers_elg)
+
+# Step 3: Conduct the mediation analysis
+med.out <- mediation::mediate(med.fit, out.fit,
+                   treat = "CWV",
+                   mediator = "attitude_dom",
+                   boot = TRUE, sims = 10000) 
+
+# Step 4: Create table
+med_results <- data.frame(
+  Effect = c("ACME (indirect)", "ADE (direct)", "Total Effect", "Prop. Mediated"),
+  Estimate = round(c(med.out$d0, med.out$z0, med.out$tau.coef, med.out$n0), 3),
+  `95% CI Lower` = round(c(med.out$d0.ci[1], med.out$z0.ci[1], med.out$tau.ci[1], med.out$n0.ci[1]), 3),
+  `95% CI Upper` = round(c(med.out$d0.ci[2], med.out$z0.ci[2], med.out$tau.ci[2], med.out$n0.ci[2]), 3),
+  `p-value` = signif(c(med.out$d0.p, med.out$z0.p, med.out$tau.p, med.out$n0.p), 3)
+)
+
+kbl(med_results) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Model 5: Mediation model
+
+**Predictor:** Competitive worldview.
+
+**Mediator:** Predicted nomination for "good manager" survey in case of sending the dominant message.
+
+**Outcome:** Selection of dominant message.
+
+**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+**Bootstraps:** 10,000
+
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
+# Step 1: Fit the mediator model
+med.fit <- lm(nompred_dom ~ CWV + age + man + white + income_num + edu_num,
+              data = df_s3a_managers_elg)
+
+# Step 2: Fit the outcome model
+out.fit <- lm(is_dom ~ nompred_dom + CWV + age + man + white + income_num + edu_num,
+              data = df_s3a_managers_elg)
+
+# Step 3: Conduct the mediation analysis
+med.out <- mediation::mediate(med.fit, out.fit,
+                   treat = "CWV",
+                   mediator = "nompred_dom",
+                   boot = TRUE, sims = 10000) 
+
+# Step 4: Create table
+med_results <- data.frame(
+  Effect = c("ACME (indirect)", "ADE (direct)", "Total Effect", "Prop. Mediated"),
+  Estimate = round(c(med.out$d0, med.out$z0, med.out$tau.coef, med.out$n0), 3),
+  `95% CI Lower` = round(c(med.out$d0.ci[1], med.out$z0.ci[1], med.out$tau.ci[1], med.out$n0.ci[1]), 3),
+  `95% CI Upper` = round(c(med.out$d0.ci[2], med.out$z0.ci[2], med.out$tau.ci[2], med.out$n0.ci[2]), 3),
+  `p-value` = signif(c(med.out$d0.p, med.out$z0.p, med.out$tau.p, med.out$n0.p), 3)
+)
+
+kbl(med_results) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Model 6: Simultaneous mediation model
+
+**Predictor:** Competitive worldview.
+
+**Mediator 1:** Relationship expectancy of dominant message.
+
+**Mediator 2:** Compliance expectancy of dominant message.
+
+**Outcome:** Selection of dominant message.
+
+**Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
+
+**Bootstraps:** 10,000
+
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
+model <- '
+  # Regressions for mediators
+  attitude_dom  ~ a1 * CWV + age + white + man + edu_num + income_num
+  comp_dom ~ a2 * CWV + age + white + man + edu_num + income_num
+
+  # Regression for outcome
+  is_dom ~ b1 * attitude_dom + b2 * comp_dom  + c_prime * CWV + age + white + man + edu_num + income_num
+
+  # Indirect effects
+  ind1 := a1 * b1
+  ind2 := a2 * b2
+
+  # Total indirect and total effect
+  ind_total := ind1 + ind2
+  total := c_prime + ind_total
+'
+
+fit <- sem(model, data = df_s3a_managers_elg, se = "bootstrap", bootstrap = 10000)
+
+estimates <- parameterEstimates(fit, standardized = TRUE, ci = TRUE, boot.ci.type = "perc")
+
+effects_table <- estimates %>%
+  filter(label %in% c("a1","a2","b1","b2","c_prime","ind1","ind2","ind_total","total")) %>%
+  dplyr::select(label, est, se, ci.lower, ci.upper, pvalue)
+
+kbl(effects_table) %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+# Phase 2: Measures
+
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
+att_outcome <- df_s3a_employees_elg %>%  
+  group_by(is_dom) %>% 
+  summarise(N = n(),
+            attitude = mean(attitude,na.rm = T),
+            rec = mean(rec,na.rm = T),
+            points = mean(points,na.rm = T)) %>% 
+  ungroup() %>% 
+  filter(is_dom == 1) %>% 
+  select(attitude) %>% 
+  unlist() %>% 
+  unname()
+
+rec_outcome <- df_s3a_employees_elg %>%  
+  group_by(is_dom) %>% 
+  summarise(N = n(),
+            attitude = mean(attitude,na.rm = T),
+            rec = mean(rec,na.rm = T),
+            points = mean(points,na.rm = T)) %>% 
+  ungroup() %>% 
+  filter(is_dom == 1) %>% 
+  select(rec) %>% 
+  unlist() %>% 
+  unname()
+
+df_s3a_employees_elg %>%  
+  group_by(is_dom) %>% 
+  summarise(N = n(),
+            attitude = mean(attitude,na.rm = T),
+            rec = mean(rec,na.rm = T),
+            points = mean(points,na.rm = T)) %>% 
+  ungroup() %>% 
+  pivot_longer(-c(is_dom),
+               names_to = " ",
+               values_to = "values") %>% 
+  mutate(is_dom = ifelse(is_dom == 0,"nondom","dom")) %>% 
+  pivot_wider(names_from = is_dom,
+              values_from = values) %>% 
+  mutate(nondom = round(nondom,2),
+         dom = round(dom,2)) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+## Dominant message
+
+Employees who received the dominant message (*N* = 150) were asked to complete the task and, indicate their attitude towards the manager, and were then given the chance to nominate them for the "good manager" survey.
+
+### Compliance
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+mean_points <- df_s3a_employees_elg %>% 
+  filter(is_dom == 1) %>% 
+  summarise(mean = mean(points,na.rm = T)) %>% 
+  pull()
+
+df_s3a_employees_elg %>% 
+  filter(is_dom == 1) %>% 
+  ggplot(aes(x = points)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,50,5),
+                     limits = c(-5,55)) +
+  ylab("count") +
+  geom_vline(xintercept = mean_points,
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+### Relationship (attitude)
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+mean_att <- df_s3a_employees_elg %>% 
+  filter(is_dom == 1) %>% 
+  summarise(mean = mean(attitude,na.rm = T)) %>% 
+  pull()
+
+df_s3a_employees_elg %>% 
+  filter(is_dom == 1) %>% 
+  ggplot(aes(x = attitude)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(0,8)) +
+  ylab("count") +
+  geom_vline(xintercept = mean_att,
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+### Nomination for "good manager" survey
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+mean_rec <- df_s3a_employees_elg %>% 
+  filter(is_dom == 1) %>% 
+  summarise(mean = mean(rec,na.rm = T)) %>% 
+  pull()
+
+df_s3a_employees_elg %>% 
+  filter(is_dom == 1) %>% 
+  ggplot(aes(x = rec)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(0,1,1),
+                     limits = c(-1,2)) +
+  ylab("count") +
+  geom_vline(xintercept = mean_rec,
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+## Non-dominant message
+
+Employees who received the non-dominant message (*N* = 149) were asked to complete the task and, indicate their attitude towards the manager, and were then given the chance to nominate them for the "good manager" survey.
+
+### Compliance
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+mean_points <- df_s3a_employees_elg %>% 
+  filter(is_dom == 0) %>% 
+  summarise(mean = mean(points,na.rm = T)) %>% 
+  pull()
+
+df_s3a_employees_elg %>% 
+  filter(is_dom == 0) %>% 
+  ggplot(aes(x = points)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,50,5),
+                     limits = c(-5,55)) +
+  ylab("count") +
+  geom_vline(xintercept = mean_points,
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+### Relationship (attitude)
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+mean_att <- df_s3a_employees_elg %>% 
+  filter(is_dom == 0) %>% 
+  summarise(mean = mean(attitude,na.rm = T)) %>% 
+  pull()
+
+df_s3a_employees_elg %>% 
+  filter(is_dom == 0) %>% 
+  ggplot(aes(x = attitude)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(1,7,1),
+                     limits = c(0,8)) +
+  ylab("count") +
+  geom_vline(xintercept = mean_att,
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+### Nomination for "good manager" survey
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,fig.dim=c(5,3)}
+mean_rec <- df_s3a_employees_elg %>% 
+  filter(is_dom == 0) %>% 
+  summarise(mean = mean(rec,na.rm = T)) %>% 
+  pull()
+
+df_s3a_employees_elg %>% 
+  filter(is_dom == 0) %>% 
+  ggplot(aes(x = rec)) +
+  geom_histogram(fill = "lightblue",
+                 color = NA,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = seq(0,1,1),
+                     limits = c(-1,2)) +
+  ylab("count") +
+  geom_vline(xintercept = mean_rec,
+             color = "black",
+             linetype = "dashed",
+             size = 1.1) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_line(color = "grey66"),
+        axis.text.y = element_text(color = "black"),
+        axis.text.x = element_text(color = "black",
+                                   face = "bold"),
+        axis.title.x = element_text(color = "black",
+                                   face = "bold"))
+```
+
+
+# Phase 2: Analysis
+
+## Johnson-Neyman 1
+
+Analyzing if manager CWV is associated with accuracy in relationship expectancy in the case of dominant message selection.
+
+Comparison point: `r att_outcome`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(7,4)}
+df_forJNI <- df_s3a_managers_elg %>% 
+  select(PID,CWV,attitude_dom) %>% 
+  mutate(truth = att_outcome) %>% 
+  rename(pred = attitude_dom) %>% 
+  pivot_longer(-c(PID,CWV),
+               names_to = "type",
+               values_to = "score") %>% 
+  mutate(is_outcome = ifelse(type == "truth",1,0))
+  
+fiti <- lm(score ~ CWV * is_outcome,data = df_forJNI)
+
+interact_plot(fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+              interval = T)
+```
+
+*is_outcome: 0 = predictions made by managers; 1 = mean of employee responses.
+
+**Simple Slopes:**
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(4,4)}
+
+sim_slopes <- sim_slopes(fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+           johnson_neyman = F)
+
+sim_slopes$slopes %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+
+```
+
+**Intercepts:**
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(4,4)}
+sim_slopes$ints %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+
+```
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(4,4)}
+jn <- sim_slopes(
+    fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+    johnson_neyman = TRUE,
+    control.fdr = TRUE,
+    # correction for type I and II
+    
+    # include conditional intercepts
+    # conf.int = TRUE, 
+    
+    robust = "HC3",
+    # rubust SE
+    
+    # don't mean-centered non-focal variables
+    # centered = "none",
+    jnalpha = 0.05
+)
+
+jn$jn
+```
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(7,4)}
+plot <- johnson_neyman(fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+               control.fdr = T,
+               alpha = 0.05)
+
+plot$plot
+```
+
+## Johnson-Neyman 2
+
+Analyzing if CWV is associated with accuracy in nomination for the "good manager" survey in the case of dominant message selection.
+
+Comparison point: `r att_outcome`
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(7,4)}
+df_forJNI <- df_s3a_managers_elg %>% 
+  select(PID,CWV,nompred_dom) %>% 
+  mutate(truth = rec_outcome) %>% 
+  rename(pred = nompred_dom) %>% 
+  pivot_longer(-c(PID,CWV),
+               names_to = "type",
+               values_to = "score") %>% 
+  mutate(is_outcome = ifelse(type == "truth",1,0))
+  
+fiti <- lm(score ~ CWV * is_outcome,data = df_forJNI)
+
+interact_plot(fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+              interval = T)
+```
+
+*is_outcome: 0 = predictions made by managers; 1 = mean of employee responses.
+
+**Simple Slopes:**
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(4,4)}
+
+sim_slopes <- sim_slopes(fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+           johnson_neyman = F)
+
+sim_slopes$slopes %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+
+```
+
+**Intercepts:**
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(4,4)}
+sim_slopes$ints %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = "hover",
+                full_width = F,
+                position = "left")
+```
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(4,4)}
+jn <- sim_slopes(
+    fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+    johnson_neyman = TRUE,
+    control.fdr = TRUE,
+    # correction for type I and II
+    
+    # include conditional intercepts
+    # conf.int = TRUE, 
+    
+    robust = "HC3",
+    # rubust SE
+    
+    # don't mean-centered non-focal variables
+    # centered = "none",
+    jnalpha = 0.05
+)
+
+jn$jn
+```
+
+
+```{r,fig.align='left',echo=TRUE,warning=FALSE,message=FALSE,fig.dim=c(7,4)}
+plot <- johnson_neyman(fiti,
+              pred = "is_outcome",
+              modx = "CWV",
+               control.fdr = T,
+               alpha = 0.05)
+
+plot$plot
+```
+
+
