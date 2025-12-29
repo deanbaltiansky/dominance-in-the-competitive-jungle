@@ -484,7 +484,7 @@ df_s2_elg %>%
 
 **Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
 
-```{r,echo=FALSE,results='asis',warning=FALSE,message=F,fig.align='left'}
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
 m1 <- lmerTest::lmer(own_likeman ~ CWV + (1|og_pid) + age + white + man + edu_num + income_num,data = df_s2_elg)
 
 eta_table <- eta_squared(m1)
@@ -509,7 +509,7 @@ kbl(table_for_print) %>%
 
 **Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
 
-```{r,echo=FALSE,results='asis',warning=FALSE,message=F,fig.align='left'}
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
 m1 <- lmerTest::lmer(impact_rel ~ CWV + (1|og_pid) + age + white + man + edu_num + income_num,data = df_s2_elg)
 
 eta_table <- eta_squared(m1)
@@ -536,7 +536,7 @@ kbl(table_for_print) %>%
 
 **Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
 
-```{r,echo=FALSE,results='asis',warning=FALSE,message=F,fig.align='left'}
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
 # Step 1: Fit the mediator model
 med.fit <- lme4::lmer(impact_rel ~ CWV + (1|og_pid) + age + white + man + edu_num + income_num, df_s2_elg, REML=F)
 
@@ -579,7 +579,7 @@ kbl(med_results) %>%
 
 **Controls:** Age, race (white = 1; non-white = 0), gender (man = 1; non-man = 0), education (numeric), income (numeric).
 
-```{r,echo=FALSE,results='asis',warning=FALSE,message=F,fig.align='left'}
+```{r,echo=TRUE,results='asis',warning=FALSE,message=F,fig.align='left'}
 predictor  <- "CWV"
 outcome    <- "own_likeman"
 mediators  <- c("impact_rel", "impact_comp")

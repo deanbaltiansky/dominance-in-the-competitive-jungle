@@ -5014,6 +5014,18 @@ trustworthy if you have faith in them [R]</li>
 <p><strong>Controls:</strong> Age, race (white = 1; non-white = 0),
 gender (man = 1; non-man = 0), education (numeric), income
 (numeric).</p>
+<pre class="r"><code>m1 &lt;- lmerTest::lmer(own_likeman ~ CWV + (1|og_pid) + age + white + man + edu_num + income_num,data = df_s2_elg)
+
+eta_table &lt;- eta_squared(m1)
+etas_for_table &lt;- c(NA,eta_table$Eta2_partial)
+apa_lm &lt;- apa_print(m1)
+table_for_print &lt;- apa_lm$table %&gt;% 
+  mutate(eta2 = round(etas_for_table,3))
+
+kbl(table_for_print) %&gt;% 
+  kable_styling(bootstrap_options = &quot;hover&quot;,
+                full_width = F,
+                position = &quot;left&quot;)</code></pre>
 <table class="table table-hover" style="color: black; width: auto !important; ">
 <thead>
 <tr>
@@ -5213,6 +5225,18 @@ Income num
 <p><strong>Controls:</strong> Age, race (white = 1; non-white = 0),
 gender (man = 1; non-man = 0), education (numeric), income
 (numeric).</p>
+<pre class="r"><code>m1 &lt;- lmerTest::lmer(impact_rel ~ CWV + (1|og_pid) + age + white + man + edu_num + income_num,data = df_s2_elg)
+
+eta_table &lt;- eta_squared(m1)
+etas_for_table &lt;- c(NA,eta_table$Eta2_partial)
+apa_lm &lt;- apa_print(m1)
+table_for_print &lt;- apa_lm$table %&gt;% 
+  mutate(eta2 = round(etas_for_table,3))
+
+kbl(table_for_print) %&gt;% 
+  kable_styling(bootstrap_options = &quot;hover&quot;,
+                full_width = F,
+                position = &quot;left&quot;)</code></pre>
 <table class="table table-hover" style="color: black; width: auto !important; ">
 <thead>
 <tr>
@@ -5413,6 +5437,33 @@ Income num
 <p><strong>Controls:</strong> Age, race (white = 1; non-white = 0),
 gender (man = 1; non-man = 0), education (numeric), income
 (numeric).</p>
+<pre class="r"><code># Step 1: Fit the mediator model
+med.fit &lt;- lme4::lmer(impact_rel ~ CWV + (1|og_pid) + age + white + man + edu_num + income_num, df_s2_elg, REML=F)
+
+# Step 2: Fit the outcome model
+out.fit &lt;- lme4::lmer(own_likeman ~ impact_rel + CWV + (1|og_pid) + age + white + man + edu_num + income_num, df_s2_elg, REML=F)
+
+# Step 3: Conduct the mediation analysis
+med.out &lt;- mediation::mediate(med.fit, out.fit,
+                   treat = &quot;CWV&quot;,
+                   mediator = &quot;impact_rel&quot;,
+                   boot = FALSE, 
+                   sims = 10000,
+                   boot.ci.type=&quot;bca&quot;)
+
+# Step 4: Create table
+med_results &lt;- data.frame(
+  Effect = c(&quot;ACME (indirect)&quot;, &quot;ADE (direct)&quot;, &quot;Total Effect&quot;, &quot;Prop. Mediated&quot;),
+  Estimate = round(c(med.out$d0, med.out$z0, med.out$tau.coef, med.out$n0), 3),
+  `95% CI Lower` = round(c(med.out$d0.ci[1], med.out$z0.ci[1], med.out$tau.ci[1], med.out$n0.ci[1]), 3),
+  `95% CI Upper` = round(c(med.out$d0.ci[2], med.out$z0.ci[2], med.out$tau.ci[2], med.out$n0.ci[2]), 3),
+  `p-value` = signif(c(med.out$d0.p, med.out$z0.p, med.out$tau.p, med.out$n0.p), 3)
+)
+
+kbl(med_results) %&gt;% 
+  kable_styling(bootstrap_options = &quot;hover&quot;,
+                full_width = F,
+                position = &quot;left&quot;)</code></pre>
 <table class="table table-hover" style="color: black; width: auto !important; ">
 <thead>
 <tr>
@@ -5515,6 +5566,89 @@ predicted compliance impact (path 2).</p>
 <p><strong>Controls:</strong> Age, race (white = 1; non-white = 0),
 gender (man = 1; non-man = 0), education (numeric), income
 (numeric).</p>
+<pre class="r"><code>predictor  &lt;- &quot;CWV&quot;
+outcome    &lt;- &quot;own_likeman&quot;
+mediators  &lt;- c(&quot;impact_rel&quot;, &quot;impact_comp&quot;)
+controls   &lt;- c(&quot;age&quot;,&quot;white&quot;,&quot;man&quot;,&quot;edu_num&quot;,&quot;income_num&quot;)
+cluster_id &lt;- &quot;og_pid&quot;
+
+vars_needed &lt;- c(outcome, predictor, mediators, controls, cluster_id)
+df_cc &lt;- df_s2_elg[complete.cases(df_s2_elg[, vars_needed]), vars_needed]
+
+f_c &lt;- as.formula(
+  paste0(outcome, &quot; ~ &quot;, predictor, &quot; + &quot;,
+         paste(controls, collapse = &quot; + &quot;),
+         &quot; + (1|&quot;, cluster_id, &quot;)&quot;)
+)
+
+m_c &lt;- lmerTest::lmer(f_c, data = df_cc)
+
+c_row &lt;- {
+  sm &lt;- summary(m_c)
+  est &lt;- sm$coefficients[predictor, &quot;Estimate&quot;]
+  se  &lt;- sm$coefficients[predictor, &quot;Std. Error&quot;]
+  p   &lt;- sm$coefficients[predictor, &quot;Pr(&gt;|t|)&quot;]
+  ci &lt;- suppressMessages(confint(m_c, parm = predictor, method = &quot;Wald&quot;))
+  tibble(
+    label = &quot;c&quot;,
+    est = as.numeric(est),
+    se  = as.numeric(se),
+    ci.lower = as.numeric(ci[1]),
+    ci.upper = as.numeric(ci[2]),
+    pvalue = as.numeric(p)
+  )
+}
+
+controls_str &lt;- paste(controls, collapse = &quot; + &quot;)
+
+model_med &lt;- paste0(
+  mediators[1], &quot; ~ a1*&quot;, predictor, &quot; + &quot;, controls_str, &quot;\n&quot;,
+  mediators[2], &quot; ~ a2*&quot;, predictor, &quot; + &quot;, controls_str, &quot;\n\n&quot;,
+  mediators[1], &quot; ~~ &quot;, mediators[2], &quot;\n\n&quot;,
+  outcome, &quot; ~ b1*&quot;, mediators[1], &quot; + b2*&quot;, mediators[2],
+  &quot; + c_prime*&quot;, predictor, &quot; + &quot;, controls_str, &quot;\n\n&quot;,
+  &quot;ind1 := a1*b1\n&quot;,
+  &quot;ind2 := a2*b2\n&quot;,
+  &quot;ind_total := ind1 + ind2\n&quot;
+)
+
+fit_med &lt;- sem(
+  model_med,
+  data = df_cc,
+  cluster = cluster_id,
+  se = &quot;robust.cluster&quot;
+)
+
+keep_labels &lt;- c(&quot;a1&quot;,&quot;a2&quot;,&quot;b1&quot;,&quot;b2&quot;,&quot;c_prime&quot;,&quot;ind1&quot;,&quot;ind2&quot;,&quot;ind_total&quot;)
+
+lavaan_rows &lt;- parameterEstimates(fit_med, ci = TRUE) %&gt;%
+  filter(label %in% keep_labels) %&gt;%
+  select(label, est, se, ci.lower, ci.upper, pvalue)
+
+
+cprime_est &lt;- lavaan_rows$est[lavaan_rows$label == &quot;c_prime&quot;]
+indtot_est &lt;- lavaan_rows$est[lavaan_rows$label == &quot;ind_total&quot;]
+
+total_row &lt;- c_row %&gt;%
+  mutate(label = &quot;total&quot;)
+
+final_table &lt;- bind_rows(
+  lavaan_rows,
+  c_row,
+  total_row
+) %&gt;%
+  mutate(
+    label = factor(
+      label,
+      levels = c(&quot;a1&quot;,&quot;a2&quot;,&quot;b1&quot;,&quot;b2&quot;,&quot;c&quot;,&quot;c_prime&quot;,&quot;ind1&quot;,&quot;ind2&quot;,&quot;ind_total&quot;,&quot;total&quot;)
+    )
+  ) %&gt;%
+  arrange(label)
+
+kbl(final_table) %&gt;% 
+  kable_styling(bootstrap_options = &quot;hover&quot;,
+                full_width = F,
+                position = &quot;left&quot;)</code></pre>
 <table class="table table-hover" style="color: black; width: auto !important; ">
 <thead>
 <tr>
